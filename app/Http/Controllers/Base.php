@@ -14,15 +14,22 @@ class Base extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+    function __construct() {
+      $this->arg = new Argumento;
+      $this->gerador = new Gerador;
+}
+
    public function CarragaXml(Request $request){
 
     $xml = simplexml_load_file($request->file('arquivo'));
-    $arg =new Argumento;
-    $listaArgumentos = $arg->CriaListaArgumentos($xml);
-    $no = new Gerador;
-    $arvore = $no->inicializarDerivacao($listaArgumentos['premissas'],$listaArgumentos['conclusao']);
-    $arv = $no->arvoreOtimizada($arvore);
+
+    $listaArgumentos = $this->arg->CriaListaArgumentos($xml);
+    $arvore = $this->gerador->inicializarDerivacao($listaArgumentos['premissas'],$listaArgumentos['conclusao']);
+    $arv =  $this->gerador->arvoreOtimizada($arvore);
+   //  var_dump($arv);
     $impresaoAvr = $this->geraListaArvore($arv,600,300,0);
+    
     return view('arvoreotimizada',['arv'=>$impresaoAvr]);
    }
 
@@ -30,7 +37,7 @@ class Base extends Controller
    public function geraListaArvore($arvore,$width,$posX,$posY,$array=[])
    {
        $posYFilho = $posY + 100;
-       array_push($array,['arv'=>$arvore,'str'=>$this->stringNo($arvore->getValorNo()), 'posX'=>$posX, 'posY'=>$posYFilho]);
+       array_push($array,['arv'=>$arvore,'str'=>$this->arg->stringArg($arvore->getValorNo()), 'posX'=>$posX, 'posY'=>$posYFilho]);
        if ($arvore->getFilhoEsquerdaNo() != null) {
            $divisao = $width / ($arvore->getFilhoEsquerdaNo()->getLinhaNo() + 1);
            $posXFilho = 0;
@@ -57,51 +64,4 @@ class Base extends Controller
        }
        return $array;
    }
-
-    public function stringNo($argumento){
-        if (in_array($argumento->getTipoPredicado(), ['CONJUNCAO','BICONDICIONAL','CONDICIONAL', 'DISJUNCAO'])){
-            $negacao='';
-            $string=null;
-            print_r('1');
-            if ($argumento->getNegadoPredicado()>0){
-                for($i = 0 ; $i < $argumento->getNegadoPredicado(); $i++){
-                    $negacao="~ ".$negacao;
-                }
-            }
-            switch ($argumento->getTipoPredicado()) {
-                case 'CONJUNCAO':
-                    $string = $negacao.' ('.$this->stringNo($argumento->getEsquerdaPredicado()).' ^ '.$this->stringNo($argumento->getDireitaPredicado()).')';
-                    break;
-                case 'BICONDICIONAL':
-//                    print_r($no);
-                    $string = $negacao.' ('.$this->stringNo($argumento->getEsquerdaPredicado()).' ↔ '.$this->stringNo($argumento->getDireitaPredicado()).')';
-                    break;
-                case 'CONDICIONAL':
-
-                    $string = ' ('.$this->stringNo($argumento->getEsquerdaPredicado()).' → '.$this->stringNo($argumento->getDireitaPredicado()).')';
-                    break;
-                case 'DISJUNCAO':
-                    $string =$negacao.' ('.$this->stringNo($argumento->getEsquerdaPredicado()).' v '.$this->stringNo($argumento->getDireitaPredicado()).')';
-                    break;
-            }
-            return $string;
-        }
-//         if($no->getValorNo()->getTipoPredicado()=='PREDICATIVO'){
-        else{
-//            print($no->getValorNo()->getValorPredicado());
-//            print('--');
-            $negacao='';
-            if ($argumento->getNegadoPredicado()>0){
-                for($i = 0 ; $i < $argumento->getNegadoPredicado(); $i++){
-                    $negacao="~ ".$negacao;
-                }
-            }
-            $string= $negacao.' '.$argumento->getValorPredicado();
-
-            return $string;
-        }
-
-    }
-
-
 }

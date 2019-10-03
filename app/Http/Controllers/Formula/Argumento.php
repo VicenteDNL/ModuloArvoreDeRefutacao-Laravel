@@ -201,4 +201,44 @@ class Argumento extends Controller
         
         
     }
+
+    public function stringArg($argumento){
+        if (in_array($argumento->getTipoPredicado(), ['CONJUNCAO','BICONDICIONAL','CONDICIONAL', 'DISJUNCAO'])){
+            $negacao='';
+            $string=null;
+            if ($argumento->getNegadoPredicado()>0){
+                for($i = 0 ; $i < $argumento->getNegadoPredicado(); $i++){
+                    $negacao="~ ".$negacao;
+                }
+            }
+            switch ($argumento->getTipoPredicado()) {
+                case 'CONJUNCAO':
+                    $string = $negacao.' ('.$this->stringArg($argumento->getEsquerdaPredicado()).' ^ '.$this->stringArg($argumento->getDireitaPredicado()).')';
+                    break;
+                case 'BICONDICIONAL':
+                    $string = $negacao.' ('.$this->stringArg($argumento->getEsquerdaPredicado()).' ↔ '.$this->stringArg($argumento->getDireitaPredicado()).')';
+                    break;
+                case 'CONDICIONAL':
+
+                    $string = ' ('.$this->stringArg($argumento->getEsquerdaPredicado()).' → '.$this->stringArg($argumento->getDireitaPredicado()).')';
+                    break;
+                case 'DISJUNCAO':
+                    $string =$negacao.' ('.$this->stringArg($argumento->getEsquerdaPredicado()).' v '.$this->stringArg($argumento->getDireitaPredicado()).')';
+                    break;
+            }
+            return $string;
+        }
+        else{
+            $negacao='';
+            if ($argumento->getNegadoPredicado()>0){
+                for($i = 0 ; $i < $argumento->getNegadoPredicado(); $i++){
+                    $negacao="~ ".$negacao;
+                }
+            }
+            $string= $negacao.' '.$argumento->getValorPredicado();
+
+            return $string;
+        }
+
+    }
 }

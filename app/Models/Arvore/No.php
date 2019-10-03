@@ -11,18 +11,20 @@ class No extends Model
     protected $filho_centro; // OBJECT (No) - ramo descendo no centro (separação das premissas)
     protected $filho_direita; // OBJECT (No) - ramo descendo no direita (aplicação da regra)
     protected $linha; // INT - Linha em que esta o No
-    protected $linhaContraDeri; // INT - A linha do nó que encontrou sua contradição OU nao qual foi derivado
+    protected $linhaContradicao;// INT - A linha do nó que encontrou sua contradição 
+    protected $linhaDerivacao; // INT - A linha do nó no qual foi derivado
     protected $utilizada; // BOOLEAN - Sê o No já foi utilizado para derivação
     protected $fechado; // true ou false - Indica sê o nó está fechado
 
 
-    public function __construct($valor,$filho_esquerda,$filho_centro,$filho_direita,$linha,$linha_contradicao,$utilizada,$fechado){
+    public function __construct($valor,$filho_esquerda,$filho_centro,$filho_direita,$linha,$linhaContradicao,$linhaDerivacao,$utilizada,$fechado){
         $this->valor = $valor;
         $this->filho_direita = $filho_direita;
         $this->filho_esquerda = $filho_esquerda;
         $this->filho_centro = $filho_centro;
         $this->linha = $linha;
-        $this->linhaContraDeri = $linha_contradicao;
+        $this->linhaContradicao = $linhaContradicao;
+        $this->linhaDerivacao = $linhaDerivacao;
         $this->utilizada = $utilizada;
         $this->fechado = $fechado;
     }
@@ -69,20 +71,25 @@ class No extends Model
 
     public function FecharRamo($linha_contradicao){
         $this->fechado=true;
-        $this->linhaContraDeri=$linha_contradicao;
+        $this->linhaContradicao=$linha_contradicao;
    }
 
-    public function setLinhaDerivacao($linha_contradicao){
-        $this->linhaContraDeri=$linha_contradicao;
+    public function setLinhaDerivacao($linhaDerivacao){
+        $this->linhaDerivacao=$linhaDerivacao;
     }
 
-    public function getLinhaContraDeri(){
-        return $this->linhaContraDeri;
+    public function getLinhaDerivacao(){
+        return $this->linhaDerivacao;
+    }
+
+    public function getLinhaContradicao(){
+        return $this->linhaContradicao;
     }
 
     public function isFechado(){
         return $this->fechado;
     }
+
 
     public function isUtilizado(){
        return $this->utilizada;

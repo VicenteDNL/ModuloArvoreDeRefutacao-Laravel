@@ -55,11 +55,11 @@ class Gerador extends Controller
         if ($premissas !=null){
             foreach ($premissas as $premissa){
                 if ($this->arvore==null){
-                    $this->arvore = new No($premissa->getValorObjPremissa(),null,null,null,1,null,null,false);
+                    $this->arvore = new No($premissa->getValorObjPremissa(),null,null,null,1,null,null,false,false);
                     $ultimoNo=$this->arvore;
                 }
                 else{
-                    $ultimoNo->setFilhoCentroNo(new No($premissa->getValorObjPremissa(),null,null,null,$this->getUltimaLinha(),null,false,false));
+                    $ultimoNo->setFilhoCentroNo(new No($premissa->getValorObjPremissa(),null,null,null,$this->getUltimaLinha(),null,null,false,false));
                     $ultimoNo=$ultimoNo->getFilhoCentroNo();
                 }
                 $this->addLinha(); 
@@ -68,10 +68,10 @@ class Gerador extends Controller
         if ($conclusao !=null){
             $conclusao[0]->getValorObjConclusao()->addNegacaoPredicado();
             if ($this->arvore==null){
-                $this->arvore= (new No($conclusao[0]->getValorObjConclusao(),null,null,null,1,null,false,false));
+                $this->arvore= (new No($conclusao[0]->getValorObjConclusao(),null,null,null,1,null,null,false,false));
                 $ultimoNo=$this->arvore;
             }else{
-                $ultimoNo->setFilhoCentroNo(new No($conclusao[0]->getValorObjConclusao(),null,null,null,$this->getUltimaLinha(),null,false,false));
+                $ultimoNo->setFilhoCentroNo(new No($conclusao[0]->getValorObjConclusao(),null,null,null,$this->getUltimaLinha(),null,null,false,false));
                 $ultimoNo=$ultimoNo->getFilhoCentroNo();
             }
             $this->addLinha(); 
@@ -235,14 +235,14 @@ class Gerador extends Controller
      }
 
      /*esta função recebe a referencia do No que vai sofrer inserção, a arvore atual, e o array dos nos resultantes da aplicacao da regra de derivacao e faz a verificação da contradicao do novo no*/
-     public function criarNoBifurcado($noInsercao,$arvore,$array_filhos){
-        $noInsercao->setFilhoEsquerdaNo(new No($array_filhos['esquerda'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,false,false));
+     public function criarNoBifurcado($noInsercao,$arvore,$array_filhos,$linhaDerivado){
+        $noInsercao->setFilhoEsquerdaNo(new No($array_filhos['esquerda'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,$linhaDerivado,false,false));
 
         $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoEsquerdaNo());
         if($contradicao!=false){
             $noInsercao->getFilhoEsquerdaNo()->FecharRamo($contradicao->getLinhaNo());
         }
-        $noInsercao->setFilhoDireitaNo(new No($array_filhos['direita'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,false,false));
+        $noInsercao->setFilhoDireitaNo(new No($array_filhos['direita'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,$linhaDerivado,false,false));
         $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoDireitaNo());
         if($contradicao!=false){
             $noInsercao->getFilhoDireitaNo()->FecharRamo($contradicao->getLinhaNo());
@@ -250,28 +250,28 @@ class Gerador extends Controller
      }
 
      /*esta função recebe a referencia do No que vai sofrer inserção, a arvore atual, e o array dos nos resultantes da aplicacao da regra de derivacao e faz a verificação da contradicao do novo no*/
-     public function criarNoBifurcadoDuplo($noInsercao,$arvore,$array_filhos){
+     public function criarNoBifurcadoDuplo($noInsercao,$arvore,$array_filhos,$linhaDerivado){
 
-        $noInsercao->setFilhoEsquerdaNo(new No($array_filhos['esquerda'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,false,false));
+        $noInsercao->setFilhoEsquerdaNo(new No($array_filhos['esquerda'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,$linhaDerivado,false,false));
         $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoEsquerdaNo());
         if($contradicao!=false){
             $noInsercao->getFilhoEsquerdaNo()->FecharRamo($contradicao->getLinhaNo());
         }
 
-        $noInsercao->getFilhoEsquerdaNo()->setFilhoCentroNo(new No($array_filhos['esquerda'][1],null,null,null,$noInsercao->getLinhaNo()+2,null,false,false));
+        $noInsercao->getFilhoEsquerdaNo()->setFilhoCentroNo(new No($array_filhos['esquerda'][1],null,null,null,$noInsercao->getLinhaNo()+2,null,$linhaDerivado,false,false));
         $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoEsquerdaNo()->getFilhoCentroNo());
         if($contradicao!=false){
             $noInsercao->getFilhoEsquerdaNo()->getFilhoCentroNo()->FecharRamo($contradicao->getLinhaNo());
         }
 
 
-        $noInsercao->setFilhoDireitaNo(new No($array_filhos['direita'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,false,false));
+        $noInsercao->setFilhoDireitaNo(new No($array_filhos['direita'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,$linhaDerivado,false,false));
         $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoDireitaNo());
         if($contradicao!=false){
             $noInsercao->getFilhoDireitaNo()->FecharRamo($contradicao->getLinhaNo());
         }
 
-        $noInsercao->getFilhoDireitaNo()->setFilhoCentroNo(new No($array_filhos['direita'][1],null,null,null,$noInsercao->getLinhaNo()+2,null,false,false));
+        $noInsercao->getFilhoDireitaNo()->setFilhoCentroNo(new No($array_filhos['direita'][1],null,null,null,$noInsercao->getLinhaNo()+2,null,$linhaDerivado,false,false));
         $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoDireitaNo()->getFilhoCentroNo());
         if($contradicao!=false){
             $noInsercao->getFilhoDireitaNo()->getFilhoCentroNo()->FecharRamo($contradicao->getLinhaNo());
@@ -279,10 +279,10 @@ class Gerador extends Controller
      }
 
      /*esta função recebe a referencia do No que vai sofrer inserção, a arvore atual, e o array dos nos resultantes da aplicacao da regra de derivacao e faz a verificação da contradicao do novo no*/
-     public function criarNoSemBifucacao($noInsercao,$arvore,$array_filhos){
+     public function criarNoSemBifucacao($noInsercao,$arvore,$array_filhos,$linhaDerivado){
 
-         $noInsercao->setFilhoCentroNo(new No($array_filhos['centro'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,false,false));
-         $noInsercao->getFilhoCentroNo()->setFilhoCentroNo(new No($array_filhos['centro'][1],null,null,null,$noInsercao->getLinhaNo()+2,null,false,false));
+         $noInsercao->setFilhoCentroNo(new No($array_filhos['centro'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,$linhaDerivado,false,false));
+         $noInsercao->getFilhoCentroNo()->setFilhoCentroNo(new No($array_filhos['centro'][1],null,null,null,$noInsercao->getLinhaNo()+2,null,$linhaDerivado,false,false));
 
          $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoCentroNo());
          if($contradicao!=false){
@@ -291,8 +291,8 @@ class Gerador extends Controller
      }
 
      /*esta função recebe a referencia do No que vai sofrer inserção, a arvore atual, e o array dos nos resultantes da aplicacao da regra de derivacao e faz a verificação da contradicao do novo no*/
-     public function criarNo($noInsercao,$arvore,$array_filhos){
-         $noInsercao->setFilhoCentroNo(new No($array_filhos['centro'][0],null,null,null,$this->getUltimaLinha(),null,false,false));
+     public function criarNo($noInsercao,$arvore,$array_filhos,$linhaDerivado){
+         $noInsercao->setFilhoCentroNo(new No($array_filhos['centro'][0],null,null,null,$this->getUltimaLinha(),null,$linhaDerivado,false,false));
 
          $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoCentroNo());
          if($contradicao!=false){
@@ -313,24 +313,24 @@ class Gerador extends Controller
              if ($no){
                  $array_filhos =$this->regras->DuplaNeg($no->getValorNo());
                  $no->utilizado(true);
-                 $this->criarNo($noInsercao,$arvore,$array_filhos);
+                 $this->criarNo($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
                  return $this->arvoreOtimizada($arvore);
              }
              elseif($noSemBifur){
                  if($noSemBifur->getValorNo()->getTipoPredicado()=='CONJUNCAO' and $noSemBifur->getValorNo()->getNegadoPredicado()==0){
                      $array_filhos = $this->regras->conjuncao($noSemBifur->getValorNo());
                      $noSemBifur->utilizado(true);
-                     $this->criarNoSemBifucacao($noInsercao,$arvore,$array_filhos);
+                     $this->criarNoSemBifucacao($noInsercao,$arvore,$array_filhos,$noSemBifur->getLinhaNo());
                  }
                  else if ($noSemBifur->getValorNo()->getTipoPredicado()== 'DISJUNCAO' and $noSemBifur->getValorNo()->getNegadoPredicado()==1){
                      $array_filhos = $this->regras->disjuncaoNeg($noSemBifur->getValorNo());
                      $noSemBifur->utilizado(true);
-                     $this->criarNoSemBifucacao($noInsercao,$arvore,$array_filhos);
+                     $this->criarNoSemBifucacao($noInsercao,$arvore,$array_filhos,$noSemBifur->getLinhaNo());
                  }
                  elseif ($noSemBifur->getValorNo()->getTipoPredicado()== 'CONDICIONAL' and $noSemBifur->getValorNo()->getNegadoPredicado()==1) {
                      $array_filhos = $this->regras->condicionalNeg($noSemBifur->getValorNo());
                      $noSemBifur->utilizado(true);
-                     $this->criarNoSemBifucacao($noInsercao,$arvore,$array_filhos);
+                     $this->criarNoSemBifucacao($noInsercao,$arvore,$array_filhos,$noSemBifur->getLinhaNo());
                  }
                 return $this->arvoreOtimizada($arvore);
              }
@@ -338,36 +338,34 @@ class Gerador extends Controller
                  if($noBifur->getValorNo()->getTipoPredicado()=='DISJUNCAO' and $noBifur->getValorNo()->getNegadoPredicado()==0){
                      $array_filhos = $this->regras->disjuncao($noBifur->getValorNo());
                      $noBifur->utilizado(true);
-                     $this->criarNoBifurcado($noInsercao,$arvore,$array_filhos);
+                     $this->criarNoBifurcado($noInsercao,$arvore,$array_filhos,$noBifur->getLinhaNo());
                  }
                  else if ($noBifur->getValorNo()->getTipoPredicado()== 'CONDICIONAL' and $noBifur->getValorNo()->getNegadoPredicado()==0){
                      $array_filhos = $this->regras->condicional($noBifur->getValorNo());
                      $noBifur->utilizado(true);
-                     $this->criarNoBifurcado($noInsercao,$arvore,$array_filhos);
+                     $this->criarNoBifurcado($noInsercao,$arvore,$array_filhos,$noBifur->getLinhaNo());
                  }
                  else if ($noBifur->getValorNo()->getTipoPredicado()== 'BICONDICIONAL' and $noBifur->getValorNo()->getNegadoPredicado()==0){
                      $array_filhos = $this->regras->bicondicional($noBifur->getValorNo());
                      $noBifur->utilizado(true);
-                     $this->criarNoBifurcadoDuplo($noInsercao,$arvore,$array_filhos);
+                     $this->criarNoBifurcadoDuplo($noInsercao,$arvore,$array_filhos,$noBifur->getLinhaNo());
                  }
                  else if ($noBifur->getValorNo()->getTipoPredicado()== 'CONJUNCAO' and $noBifur->getValorNo()->getNegadoPredicado()==1){
                       
                      $array_filhos = $this->regras->conjuncaoNeg($noBifur->getValorNo());
                      $noBifur->utilizado(true);
-                     $this->criarNoBifurcado($noInsercao,$arvore,$array_filhos);
+                     $this->criarNoBifurcado($noInsercao,$arvore,$array_filhos,$noBifur->getLinhaNo());
                  }
                  else if ($noBifur->getValorNo()->getTipoPredicado()== 'BICONDICIONAL' and $noBifur->getValorNo()->getNegadoPredicado()==1){
                      $array_filhos = $this->regras->bicondicionalNeg($noBifur->getValorNo());
                      $noBifur->utilizado(true);
-                     $this->criarNoBifurcadoDuplo($noInsercao,$arvore,$array_filhos);
+                     $this->criarNoBifurcadoDuplo($noInsercao,$arvore,$array_filhos,$noBifur->getLinhaNo());
                  }
                  return $this->arvoreOtimizada($arvore);
              }
              return $arvore;
         }
      }
-
-
 
 
 
