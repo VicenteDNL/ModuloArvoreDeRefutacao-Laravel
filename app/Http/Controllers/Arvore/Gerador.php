@@ -370,4 +370,6 @@ class Gerador extends Controller
 
 
 
+
+
 }

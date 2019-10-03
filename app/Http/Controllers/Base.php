@@ -14,7 +14,6 @@ class Base extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-
    public function CarragaXml(Request $request){
 
     $xml = simplexml_load_file($request->file('arquivo'));
@@ -25,25 +24,13 @@ class Base extends Controller
     $arv = $no->arvoreOtimizada($arvore);
     $impresaoAvr = $this->geraListaArvore($arv,600,300,0);
     return view('arvoreotimizada',['arv'=>$impresaoAvr]);
-//       ["posX"]=>int(300) ["posY"]=>int(50)
-//
-//       ["posX"]=> int(300)["posY"]=> int(100)
-//
-//    ["posX"]=> int(300)["posY"]=> int(150)
-//
-//    ["posX"]=> int(240)["posY"]=> int(200)
-//
-//    ["posX"]=> int(360)["posY"]=> int(200)
-
-
-       
    }
 
 
    public function geraListaArvore($arvore,$width,$posX,$posY,$array=[])
    {
-       $posYFilho = $posY + 50;
-       array_push($array,['arv'=>$arvore, 'posX'=>$posX, 'posY'=>$posYFilho]);
+       $posYFilho = $posY + 100;
+       array_push($array,['arv'=>$arvore,'str'=>$this->stringNo($arvore->getValorNo()), 'posX'=>$posX, 'posY'=>$posYFilho]);
        if ($arvore->getFilhoEsquerdaNo() != null) {
            $divisao = $width / ($arvore->getFilhoEsquerdaNo()->getLinhaNo() + 1);
            $posXFilho = 0;
@@ -69,14 +56,52 @@ class Base extends Controller
            $array = $this->geraListaArvore($arvore->getFilhoDireitaNo(), $width, $posXFilho, $posYFilho,$array);
        }
        return $array;
-
-
-
-
-
    }
 
-    public function BuscaEmLargura(){
+    public function stringNo($argumento){
+        if (in_array($argumento->getTipoPredicado(), ['CONJUNCAO','BICONDICIONAL','CONDICIONAL', 'DISJUNCAO'])){
+            $negacao='';
+            $string=null;
+            print_r('1');
+            if ($argumento->getNegadoPredicado()>0){
+                for($i = 0 ; $i < $argumento->getNegadoPredicado(); $i++){
+                    $negacao="~ ".$negacao;
+                }
+            }
+            switch ($argumento->getTipoPredicado()) {
+                case 'CONJUNCAO':
+                    $string = $negacao.' ('.$this->stringNo($argumento->getEsquerdaPredicado()).' ^ '.$this->stringNo($argumento->getDireitaPredicado()).')';
+                    break;
+                case 'BICONDICIONAL':
+//                    print_r($no);
+                    $string = $negacao.' ('.$this->stringNo($argumento->getEsquerdaPredicado()).' ↔ '.$this->stringNo($argumento->getDireitaPredicado()).')';
+                    break;
+                case 'CONDICIONAL':
+
+                    $string = ' ('.$this->stringNo($argumento->getEsquerdaPredicado()).' → '.$this->stringNo($argumento->getDireitaPredicado()).')';
+                    break;
+                case 'DISJUNCAO':
+                    $string =$negacao.' ('.$this->stringNo($argumento->getEsquerdaPredicado()).' v '.$this->stringNo($argumento->getDireitaPredicado()).')';
+                    break;
+            }
+            return $string;
+        }
+//         if($no->getValorNo()->getTipoPredicado()=='PREDICATIVO'){
+        else{
+//            print($no->getValorNo()->getValorPredicado());
+//            print('--');
+            $negacao='';
+            if ($argumento->getNegadoPredicado()>0){
+                for($i = 0 ; $i < $argumento->getNegadoPredicado(); $i++){
+                    $negacao="~ ".$negacao;
+                }
+            }
+            $string= $negacao.' '.$argumento->getValorPredicado();
+
+            return $string;
+        }
 
     }
+
+
 }
