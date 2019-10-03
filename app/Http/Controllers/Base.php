@@ -23,56 +23,60 @@ class Base extends Controller
     $no = new Gerador;
     $arvore = $no->inicializarDerivacao($listaArgumentos['premissas'],$listaArgumentos['conclusao']);
     $arv = $no->arvoreOtimizada($arvore);
-    
-    $this->geraListaArvore($arv,600,300,50);
+    $impresaoAvr = $this->geraListaArvore($arv,600,300,0);
+    return view('arvoreotimizada',['arv'=>$impresaoAvr]);
+//       ["posX"]=>int(300) ["posY"]=>int(50)
+//
+//       ["posX"]=> int(300)["posY"]=> int(100)
+//
+//    ["posX"]=> int(300)["posY"]=> int(150)
+//
+//    ["posX"]=> int(240)["posY"]=> int(200)
+//
+//    ["posX"]=> int(360)["posY"]=> int(200)
 
 
-
-
-   //  return view('arvoreotimizada',['arv'=>$arv]);
        
    }
 
 
-   public function geraListaArvore($arvore,$width,$posX,$posY,$array =[]){
-      
-      if ($arvore->getFilhoCentroNo() ==null and $arvore->getFilhoEsquerdaNo()==null and $arvore->getFilhoDireitaNo()==null){
-         return  $array;
-      }
-      else{
-         $no = [$arvore,$posX,$posY];
-         array_push($array, $no);
-         $posY= $posY+50;
-   
-         if ($arvore->getFilhoCentroNo()!=null){
-            array_push($array,$this->geraListaArvore($arvore->getFilhoCentroNo(),$width,$posX,$posY));
-         }
-         if ($arvore->getFilhoEsquerdaNo()!=null){
-   
-            $divisao = $width/($arvore->getLinhaNo()+1);
-            $posFilho = 0;
-            for ($i=0 ; $i == ($arvore->getLinhaNo()+1); $i++ ){
-               if ($divisao+$posFilho < $posX){
-                  $posFilho = $posFilho + $divisao;
+   public function geraListaArvore($arvore,$width,$posX,$posY,$array=[])
+   {
+       $posYFilho = $posY + 50;
+       array_push($array,['arv'=>$arvore, 'posX'=>$posX, 'posY'=>$posYFilho]);
+       if ($arvore->getFilhoEsquerdaNo() != null) {
+           $divisao = $width / ($arvore->getFilhoEsquerdaNo()->getLinhaNo() + 1);
+           $posXFilho = 0;
+           for ($i = 0; $i < ($arvore->getFilhoEsquerdaNo()->getLinhaNo() + 1); $i++) {
+               if (($divisao + $posXFilho) < $posX) {
+                   $posXFilho = $posXFilho + $divisao;
                }
-            }
-            array_push($array,$this->geraListaArvore($arvore->getFilhoEsquerdaNo(),$width, $posFilho,$posY));
-          }
-         if ($arvore->getFilhoDireitaNo()!=null){
-         
-            $divisao = $width/($arvore->getLinhaNo()+1);
-            $posFilho = $width;
-            for ($i=0 ; $i == ($arvore->getLinhaNo()+1); $i++ ){
-               if ($divisao-$posFilho > $posX){
-                  $posFilho = $posFilho - $divisao;
+           }
+           $array = $this->geraListaArvore($arvore->getFilhoEsquerdaNo(), $width, $posXFilho, $posYFilho,$array);
+       }
+       if ($arvore->getFilhoCentroNo() != null) {
+
+           $array = $this->geraListaArvore($arvore->getFilhoCentroNo(), $width, $posX, $posYFilho,$array);
+       }
+       if ($arvore->getFilhoDireitaNo() != null) {
+           $divisao = $width / ($arvore->getFilhoDireitaNo()->getLinhaNo() + 1);
+           $posXFilho = $width;
+           for ($i = 0; $i <($arvore->getFilhoDireitaNo()->getLinhaNo() + 1); $i++) {
+               if ( $posXFilho-$divisao > $posX) {
+                   $posXFilho = $posXFilho - $divisao;
                }
-            }
-            array_push($array,$this->geraListaArvore($arvore->getFilhoDireitaNo(),$width,$posFilho,$posY));
-         }
-         return  $array;
-      
-      }
-      
-   
-  }
+           }
+           $array = $this->geraListaArvore($arvore->getFilhoDireitaNo(), $width, $posXFilho, $posYFilho,$array);
+       }
+       return $array;
+
+
+
+
+
+   }
+
+    public function BuscaEmLargura(){
+
+    }
 }
