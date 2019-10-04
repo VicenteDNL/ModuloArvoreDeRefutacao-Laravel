@@ -81,65 +81,73 @@ class Gerador extends Controller
 
      /* está função encontra o NO que possui dupla negação e o retorna, se nao encontrar retorna false
         buscando do nó raiz até os nos folhas*/
-    public function encontraDuplaNegacao($arvore){
+    public function encontraDuplaNegacao($arvore,$noSemBifur){
+        $negacao=false;
         if ($arvore->getValorNo()->getNegadoPredicado()>=2 and $arvore->isUtilizado()==false){
-            return $arvore;
-        }
-        else if ($arvore->getFilhoEsquerdaNo()!=null){;
-            return $this->encontraDuplaNegacao($arvore->getFilhoEsquerdaNo());
-        }
-        else if ($arvore->getFilhoCentroNo()!=null){
-            return $this->encontraDuplaNegacao($arvore->getFilhoCentroNo());
-        }
-        else if ($arvore->getFilhoDireitaNo()!=null){
-            return $this->encontraDuplaNegacao($arvore->getFilhoDireitaNo());
+            if ($this->isDecendente($arvore,$noSemBifur)){
+                return $arvore;} 
         }
         else{
-            return false;
+            if ($arvore->getFilhoEsquerdaNo()!=null and $negacao==false ){;
+                $negacao = $this->encontraDuplaNegacao($arvore->getFilhoEsquerdaNo(),$noSemBifur);
+            }
+            if ($arvore->getFilhoCentroNo()!=null and $negacao==false ){
+                $negacao = $this->encontraDuplaNegacao($arvore->getFilhoCentroNo(),$noSemBifur);
+            }
+            if ($arvore->getFilhoDireitaNo()!=null and $negacao==false ){
+                $negacao = $this->encontraDuplaNegacao($arvore->getFilhoDireitaNo(),$noSemBifur);
+            }
+            return $negacao;
         }
+      
     }
 
      /* está função encontrar o NO que possui bifurcação e ainda nao utilizado e o retorna No, se nao encontrar retorna false, buscando do nó raiz até os nos folhas*/
-     public function encontraNoBifuca($arvore){
+     public function encontraNoBifuca($arvore,$noSemBifur){
          $NoBifucacao = false;
          if (in_array($arvore->getValorNo()->getTipoPredicado(), ['DISJUNCAO','CONDICIONAL','BICONDICIONAL']) and $arvore->getValorNo()->getNegadoPredicado()==0 and $arvore->isUtilizado()==false){
-             return $arvore;
+            if ($this->isDecendente($arvore,$noSemBifur)){
+                return $arvore;} 
          }
          else if (in_array($arvore->getValorNo()->getTipoPredicado(), ['CONJUNCAO','BICONDICIONAL']) and $arvore->getValorNo()->getNegadoPredicado()==1 and $arvore->isUtilizado()==false){
-             return $arvore;
+            if ($this->isDecendente($arvore,$noSemBifur)){
+                return $arvore;} 
          }
          else{
-            if ($arvore->getFilhoEsquerdaNo()!=null){
-                $NoBifucacao = $this->encontraNoBifuca($arvore->getFilhoEsquerdaNo());
+            if ($arvore->getFilhoEsquerdaNo()!=null and $NoBifucacao==false){
+                $NoBifucacao = $this->encontraNoBifuca($arvore->getFilhoEsquerdaNo(),$noSemBifur);
              }
-            if ($arvore->getFilhoCentroNo()!=null){
-                $NoBifucacao = $this->encontraNoBifuca($arvore->getFilhoCentroNo());
+            if ($arvore->getFilhoCentroNo()!=null and $NoBifucacao==false){
+                $NoBifucacao = $this->encontraNoBifuca($arvore->getFilhoCentroNo(),$noSemBifur);
              }
-             if ($arvore->getFilhoDireitaNo()!=null){
-                 $NoBifucacao = $this->encontraNoBifuca($arvore->getFilhoDireitaNo());
+             if ($arvore->getFilhoDireitaNo()!=null and $NoBifucacao==false){
+                 $NoBifucacao = $this->encontraNoBifuca($arvore->getFilhoDireitaNo(),$noSemBifur);
              }
              return  $NoBifucacao;
          }
      }
 
      /* está função encontrar o NO que possui nao possui bifurcação e ainda nao utilizado e o retorna No, se nao encontrar retorna false, buscando do nó raiz até os nos folhas*/
-     public function encontraNoSemBifucacao($arvore){
+     public function encontraNoSemBifucacao($arvore,$noSemBifur){
          $NoSemBifucacao = false;
          if ($arvore->getValorNo()->getTipoPredicado()== 'CONJUNCAO' and $arvore->getValorNo()->getNegadoPredicado()==0 and $arvore->isUtilizado()==false){
-             return $arvore;
+            if ($this->isDecendente($arvore,$noSemBifur)){
+                return $arvore;} 
+         
          }
          else if (in_array($arvore->getValorNo()->getTipoPredicado(), ['DISJUNCAO','CONDICIONAL']) and $arvore->getValorNo()->getNegadoPredicado()==1 and $arvore->isUtilizado()==false){
-             return $arvore;
+            if ($this->isDecendente($arvore,$noSemBifur)){
+                return $arvore;} 
          }
          else{
              if ($arvore->getFilhoEsquerdaNo()!=null and $NoSemBifucacao==false){
-                 $NoSemBifucacao = $this->encontraNoSemBifucacao($arvore->getFilhoEsquerdaNo());
+                 $NoSemBifucacao = $this->encontraNoSemBifucacao($arvore->getFilhoEsquerdaNo(),$noSemBifur);
              }
              if ($arvore->getFilhoCentroNo()!=null and $NoSemBifucacao==false){
-                 $NoSemBifucacao = $this->encontraNoSemBifucacao($arvore->getFilhoCentroNo());
+                 $NoSemBifucacao = $this->encontraNoSemBifucacao($arvore->getFilhoCentroNo(),$noSemBifur);
              }
              if ($arvore->getFilhoDireitaNo()!=null and $NoSemBifucacao==false){
-                 $NoSemBifucacao = $this->encontraNoSemBifucacao($arvore->getFilhoDireitaNo());
+                 $NoSemBifucacao = $this->encontraNoSemBifucacao($arvore->getFilhoDireitaNo(),$noSemBifur);
              }
              return $NoSemBifucacao;
          }
@@ -173,18 +181,24 @@ class Gerador extends Controller
      verdadeira*/
      public function isDecendente($arvore,$no){   
          $noDescendente=false;
+    
         if ($arvore->getValorNo()->getValorPredicado() == $no->getValorNo()->getValorPredicado() and $arvore->getValorNo()->getNegadoPredicado() == $no->getValorNo()->getNegadoPredicado()){
+           
             return true;
         }
         else {
             if ($arvore->getFilhoCentroNo()!=null and $noDescendente==false){
+            
                 $noDescendente = $this->isDecendente($arvore->getFilhoCentroNo(),$no);
+                
             }
             if ($arvore->getFilhoEsquerdaNo()!=null and $noDescendente==false ){
+                
                 $noDescendente = $this->isDecendente($arvore->getFilhoEsquerdaNo(),$no);     
             }
             if ($arvore->getFilhoDireitaNo()!=null and $noDescendente==false){
-                $noDescendente = $this->isDecendente($arvore->getFilhoDireitaNo(),$no);        
+                $noDescendente = $this->isDecendente($arvore->getFilhoDireitaNo(),$no);
+                        
             }
             return $noDescendente;
 
@@ -193,8 +207,11 @@ class Gerador extends Controller
 
      /* Esta função recebe uma arvore e um NO, e verifica se existe uma contradicao para o NO na Arvore, se verdadeiro retorna o NÓ contraditorio, se nao retorna False*/
      public function encontraContradicao($arvore,$no){
+        $contradicao = false;
          if ($arvore->getValorNo()->getValorPredicado() == $no->getValorNo()->getValorPredicado()){
+           
              $negacaoNo = $no->getValorNo()->getNegadoPredicado();
+             
              if ($negacaoNo == 1 and $arvore->getValorNo()->getNegadoPredicado()==0){
                  if ($this->isDecendente($arvore,$no)){
                      return $arvore;}
@@ -204,47 +221,47 @@ class Gerador extends Controller
                      return $arvore;}
              }
             else{
-                if ($arvore->getFilhoCentroNo()!=null){
-                    return $this->encontraContradicao($arvore->getFilhoCentroNo(),$no);
+                if ($arvore->getFilhoCentroNo()!=null and $contradicao == false){
+                    $contradicao = $this->encontraContradicao($arvore->getFilhoCentroNo(),$no);
                 }
-                else if ($arvore->getFilhoEsquerdaNo()!=null){
-                    return $this->encontraContradicao($arvore->getFilhoEsquerdaNo(),$no);
+                if ($arvore->getFilhoEsquerdaNo()!=null and $contradicao == false){
+                    $contradicao = $this->encontraContradicao($arvore->getFilhoEsquerdaNo(),$no);
                 }
-                else if ($arvore->getFilhoDireitaNo()!=null){
-                    return $this->encontraContradicao($arvore->getFilhoDireitaNo(),$no);
+                if ($arvore->getFilhoDireitaNo()!=null and $contradicao == false){
+                    $contradicao =  $this->encontraContradicao($arvore->getFilhoDireitaNo(),$no);
                 }
-                else{
-                    return false;
-                }
+                return $contradicao;
+                
             }
         }
         else {
-            if ($arvore->getFilhoCentroNo()!=null){
-                return $this->encontraContradicao($arvore->getFilhoCentroNo(),$no);
+            if ($arvore->getFilhoCentroNo()!=null and $contradicao == false){
+                $contradicao = $this->encontraContradicao($arvore->getFilhoCentroNo(),$no);
             }
-            else if ($arvore->getFilhoEsquerdaNo()!=null){
-                return $this->encontraContradicao($arvore->getFilhoEsquerdaNo(),$no);
+            if ($arvore->getFilhoEsquerdaNo()!=null and $contradicao == false){
+                $contradicao = $this->encontraContradicao($arvore->getFilhoEsquerdaNo(),$no);
             }
-            else if ($arvore->getFilhoDireitaNo()!=null){
-                return $this->encontraContradicao($arvore->getFilhoDireitaNo(),$no);
+            if ($arvore->getFilhoDireitaNo()!=null and $contradicao == false){
+                $contradicao =  $this->encontraContradicao($arvore->getFilhoDireitaNo(),$no);
             }
-            else{
-                return false;
-            }
-         }
+            return $contradicao;
+        }
+         
      }
 
      /*esta função recebe a referencia do No que vai sofrer inserção, a arvore atual, e o array dos nos resultantes da aplicacao da regra de derivacao e faz a verificação da contradicao do novo no*/
      public function criarNoBifurcado($noInsercao,$arvore,$array_filhos,$linhaDerivado){
+  
         $noInsercao->setFilhoEsquerdaNo(new No($array_filhos['esquerda'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,$linhaDerivado,false,false));
 
         $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoEsquerdaNo());
         if($contradicao!=false){
             $noInsercao->getFilhoEsquerdaNo()->FecharRamo($contradicao->getLinhaNo());
         }
+
         $noInsercao->setFilhoDireitaNo(new No($array_filhos['direita'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,$linhaDerivado,false,false));
         $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoDireitaNo());
-        if($contradicao!=false){
+        if($contradicao!=false){   
             $noInsercao->getFilhoDireitaNo()->FecharRamo($contradicao->getLinhaNo());
         }
      }
@@ -281,13 +298,54 @@ class Gerador extends Controller
      /*esta função recebe a referencia do No que vai sofrer inserção, a arvore atual, e o array dos nos resultantes da aplicacao da regra de derivacao e faz a verificação da contradicao do novo no*/
      public function criarNoSemBifucacao($noInsercao,$arvore,$array_filhos,$linhaDerivado){
 
-         $noInsercao->setFilhoCentroNo(new No($array_filhos['centro'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,$linhaDerivado,false,false));
-         $noInsercao->getFilhoCentroNo()->setFilhoCentroNo(new No($array_filhos['centro'][1],null,null,null,$noInsercao->getLinhaNo()+2,null,$linhaDerivado,false,false));
+        $primeiroNo=new No($array_filhos['centro'][0],null,null,null,null,null,$linhaDerivado,false,false);
+        $segundoNo=new No($array_filhos['centro'][1],null,null,null,null,null,$linhaDerivado,false,false);
+         
+        print_r('###########>>>>>');
+         $contradicaoPrim = $this->encontraContradicao($arvore,$primeiroNo);
+         print_r('<<<<<<#########');
+         $contradicaoSeg = $this->encontraContradicao($arvore,$segundoNo);
+        //  print_r($contradicaoPrim);
+        //  print_r('__&&&__');
+        //  print_r($contradicaoSeg);
+        //  print_r('|----|');
+         
+         if ($contradicaoPrim!=false and $contradicaoSeg==false){
+            
+            $noInsercao->setFilhoCentroNo($segundoNo);
+            $noInsercao->getFilhoCentroNo()->setFilhoCentroNo($primeiroNo);
 
-         $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoCentroNo());
-         if($contradicao!=false){
-             $noInsercao->getFilhoCentroNo()->FecharRamo($contradicao->getLinhaNo());
+            $primeiroNo->setLinhaNo($noInsercao->getLinhaNo()+2);
+            $segundoNo->setLinhaNo($noInsercao->getLinhaNo()+1);
+
+            $noInsercao->getFilhoCentroNo()->getFilhoCentroNo()->FecharRamo($contradicaoPrim->getLinhaNo());
          }
+         elseif($contradicaoPrim!=false and $contradicaoSeg!=false  ){
+            $noInsercao->setFilhoCentroNo($primeiroNo);
+            $noInsercao->getFilhoCentroNo()->setFilhoCentroNo($segundoNo);
+
+            $primeiroNo->setLinhaNo($noInsercao->getLinhaNo()+1);
+            $segundoNo->setLinhaNo($noInsercao->getLinhaNo()+2);
+
+            $noInsercao->getFilhoCentroNo()->getFilhoCentroNo()->FecharRamo($contradicaoSeg->getLinhaNo());
+         }
+         elseif($contradicaoPrim==false and $contradicaoSeg!=false){
+            $noInsercao->setFilhoCentroNo($primeiroNo);
+            $noInsercao->getFilhoCentroNo()->setFilhoCentroNo($segundoNo);
+
+            $primeiroNo->setLinhaNo($noInsercao->getLinhaNo()+1);
+            $segundoNo->setLinhaNo($noInsercao->getLinhaNo()+2);
+
+            $noInsercao->getFilhoCentroNo()->getFilhoCentroNo()->FecharRamo($contradicaoSeg->getLinhaNo());
+         }
+         else{
+            $noInsercao->setFilhoCentroNo($primeiroNo);
+            $noInsercao->getFilhoCentroNo()->setFilhoCentroNo($segundoNo);
+
+            $primeiroNo->setLinhaNo($noInsercao->getLinhaNo()+1);
+            $segundoNo->setLinhaNo($noInsercao->getLinhaNo()+2);
+         }
+  
      }
 
      /*esta função recebe a referencia do No que vai sofrer inserção, a arvore atual, e o array dos nos resultantes da aplicacao da regra de derivacao e faz a verificação da contradicao do novo no*/
@@ -303,13 +361,19 @@ class Gerador extends Controller
 
      public function arvoreOtimizada($arvore){
         $noInsercao=$this->proximoNoParaInsercao($arvore);
+        
         if ($noInsercao==null){
             return $arvore;
+            
         }
         else{
-            $no =$this->encontraDuplaNegacao($arvore);
-            $noBifur =$this->encontraNoBifuca($arvore);
-            $noSemBifur =$this->encontraNoSemBifucacao($arvore);
+            // print_r('$$$$');
+            // print_r( $noInsercao->getValorNo()->getValorPredicado());
+            // print_r('$$$$');
+            $no =$this->encontraDuplaNegacao($arvore,$noInsercao);
+            $noBifur =$this->encontraNoBifuca($arvore,$noInsercao);
+            $noSemBifur =$this->encontraNoSemBifucacao($arvore,$noInsercao);
+           
              if ($no){
                  $array_filhos =$this->regras->DuplaNeg($no->getValorNo());
                  $no->utilizado(true);

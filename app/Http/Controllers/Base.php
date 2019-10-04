@@ -27,9 +27,9 @@ class Base extends Controller
     $listaArgumentos = $this->arg->CriaListaArgumentos($xml);
     $arvore = $this->gerador->inicializarDerivacao($listaArgumentos['premissas'],$listaArgumentos['conclusao']);
     $arv =  $this->gerador->arvoreOtimizada($arvore);
-   //  var_dump($arv);
-    $impresaoAvr = $this->geraListaArvore($arv,600,300,0);
     
+    $impresaoAvr = $this->geraListaArvore($arv,600,300,0);
+    print_r($arv);
     return view('arvoreotimizada',['arv'=>$impresaoAvr]);
    }
 

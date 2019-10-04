@@ -42,8 +42,11 @@ class Argumento extends Controller
         elseif($negacao=="~"){
             return ['NEG'=>1, 'PREDICATIVO'=>$lpred->children()->__toString()];         
         }
+        elseif($negacao=="~~"){
+            return ['NEG'=>2, 'PREDICATIVO'=>$lpred->children()->__toString()];         
+        }
         else{
-            return ['NEG'=>2, 'PREDICATIVO'=>$lpred->children()->__toString()]; 
+            return ['NEG'=>3, 'PREDICATIVO'=>$lpred->children()->__toString()]; 
         }
     }
 
