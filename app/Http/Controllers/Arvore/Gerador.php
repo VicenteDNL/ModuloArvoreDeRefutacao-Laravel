@@ -214,6 +214,7 @@ class Gerador extends Controller
              
              if ($negacaoNo == 1 and $arvore->getValorNo()->getNegadoPredicado()==0){
                  if ($this->isDecendente($arvore,$no)){
+
                      return $arvore;}
              }
              elseif ($negacaoNo == 0 and $arvore->getValorNo()->getNegadoPredicado()==1) {
@@ -300,48 +301,34 @@ class Gerador extends Controller
 
         $primeiroNo=new No($array_filhos['centro'][0],null,null,null,null,null,$linhaDerivado,false,false);
         $segundoNo=new No($array_filhos['centro'][1],null,null,null,null,null,$linhaDerivado,false,false);
-         
-        print_r('###########>>>>>');
-         $contradicaoPrim = $this->encontraContradicao($arvore,$primeiroNo);
-         print_r('<<<<<<#########');
-         $contradicaoSeg = $this->encontraContradicao($arvore,$segundoNo);
-        //  print_r($contradicaoPrim);
-        //  print_r('__&&&__');
-        //  print_r($contradicaoSeg);
-        //  print_r('|----|');
-         
+
+
+         $noInsercao->setFilhoCentroNo($primeiroNo);
+         $noInsercao->getFilhoCentroNo()->setFilhoCentroNo($segundoNo);
+
+
+         $contradicaoPrim = $this->encontraContradicao($arvore,$noInsercao->getFilhoCentroNo());
+
+         $contradicaoSeg = $this->encontraContradicao($arvore,$noInsercao->getFilhoCentroNo()->getFilhoCentroNo());
+
+
          if ($contradicaoPrim!=false and $contradicaoSeg==false){
-            
+            $noInsercao->getFilhoCentroNo()->removeFilhoCentroNo();
+             $noInsercao->removeFilhoCentroNo();
+
             $noInsercao->setFilhoCentroNo($segundoNo);
             $noInsercao->getFilhoCentroNo()->setFilhoCentroNo($primeiroNo);
 
             $primeiroNo->setLinhaNo($noInsercao->getLinhaNo()+2);
             $segundoNo->setLinhaNo($noInsercao->getLinhaNo()+1);
-
             $noInsercao->getFilhoCentroNo()->getFilhoCentroNo()->FecharRamo($contradicaoPrim->getLinhaNo());
          }
-         elseif($contradicaoPrim!=false and $contradicaoSeg!=false  ){
-            $noInsercao->setFilhoCentroNo($primeiroNo);
-            $noInsercao->getFilhoCentroNo()->setFilhoCentroNo($segundoNo);
-
+         elseif(($contradicaoPrim!=false and $contradicaoSeg!=false) or ($contradicaoPrim==false and $contradicaoSeg!=false) ){
             $primeiroNo->setLinhaNo($noInsercao->getLinhaNo()+1);
             $segundoNo->setLinhaNo($noInsercao->getLinhaNo()+2);
-
-            $noInsercao->getFilhoCentroNo()->getFilhoCentroNo()->FecharRamo($contradicaoSeg->getLinhaNo());
-         }
-         elseif($contradicaoPrim==false and $contradicaoSeg!=false){
-            $noInsercao->setFilhoCentroNo($primeiroNo);
-            $noInsercao->getFilhoCentroNo()->setFilhoCentroNo($segundoNo);
-
-            $primeiroNo->setLinhaNo($noInsercao->getLinhaNo()+1);
-            $segundoNo->setLinhaNo($noInsercao->getLinhaNo()+2);
-
             $noInsercao->getFilhoCentroNo()->getFilhoCentroNo()->FecharRamo($contradicaoSeg->getLinhaNo());
          }
          else{
-            $noInsercao->setFilhoCentroNo($primeiroNo);
-            $noInsercao->getFilhoCentroNo()->setFilhoCentroNo($segundoNo);
-
             $primeiroNo->setLinhaNo($noInsercao->getLinhaNo()+1);
             $segundoNo->setLinhaNo($noInsercao->getLinhaNo()+2);
          }
@@ -367,9 +354,7 @@ class Gerador extends Controller
             
         }
         else{
-            // print_r('$$$$');
-            // print_r( $noInsercao->getValorNo()->getValorPredicado());
-            // print_r('$$$$');
+
             $no =$this->encontraDuplaNegacao($arvore,$noInsercao);
             $noBifur =$this->encontraNoBifuca($arvore,$noInsercao);
             $noSemBifur =$this->encontraNoSemBifucacao($arvore,$noInsercao);

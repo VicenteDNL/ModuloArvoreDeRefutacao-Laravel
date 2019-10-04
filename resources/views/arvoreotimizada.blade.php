@@ -1,16 +1,34 @@
-<svg width="600" height="1000">
+
+<svg width="600" height="800">
+
+@for($i = 1 ; $i<count($arv);$i++)
+        <line x1={{$arv[$i-1]['posX']}} y1={{$arv[$i-1]['posY']+27}} x2={{$arv[$i]['posX']}} y2={{$arv[$i]['posY']-27}} stroke="rgb(105,105,105)" stroke-width=2   stroke-linecap="butt"/>
+{{--        @if ($arv[$i-1]['arv']->getLinhaDerivacao()==0)--}}
+{{--                <line x1={{$arv[$i-2]['posX']}} y1={{$arv[$i-2]['posY']+27}} x2={{$arv[$i]['posX']}} y2={{$arv[$i]['posY']-27}} stroke="rgb(105,105,105)" stroke-width=2   stroke-linecap="butt"/>--}}
+{{--        @elseif($arv[$i-1]['arv']->getLinhaDerivacao()==$arv[$i]['arv']->getLinhaDerivacao())--}}
+{{--            <line x1={{$arv[$i-2]['posX']}} y1={{$arv[$i-2]['posY']+27}} x2={{$arv[$i]['posX']}} y2={{$arv[$i]['posY']-27}} stroke="rgb(105,105,105)" stroke-width=2   stroke-linecap="butt"/>--}}
+{{--        @else--}}
+{{--            <line x1={{$arv[$i-1]['posX']}} y1={{$arv[$i-1]['posY']+27}} x2={{$arv[$i]['posX']}} y2={{$arv[$i]['posY']-27}} stroke="rgb(105,105,105)" stroke-width=2   stroke-linecap="butt"/>--}}
+{{--        @endif--}}
+
+@endfor
 @foreach($arv as $valor)
+
+        <circle cx={{$valor['posX']}} cy={{$valor['posY']+27}} r="4" fill="#4682B4"/>
+        <circle cx={{$valor['posX']}} cy={{$valor['posY']-27}} r="4" fill="#4682B4"/>
     <text font-size="20" font-family="Ar" x={{30}} y={{$valor['posY']+5}}>{{$valor['arv']->getLinhaNo()}}.</text>
 
     <defs>
         <linearGradient id="grad1" x1="30%" y1="0%" x2="90%" y2="50%">
-            <stop offset="0%" style="stop-color:rgb(229,229,229);stop-opacity:1" />
-            <stop offset="100%" style="stop-color:rgb(167,167,167);stop-opacity:1" />
+            <stop offset="0%" style="stop-color:rgb(32,178,170);stop-opacity:1" />
+            <stop offset="100%" style="stop-color:rgb(0,128,128);stop-opacity:1" />
         </linearGradient>
     </defs>
-    <rect x={{$valor['posX']-75}} y={{$valor['posY']-20}} rx=20 ry=20 width="150" height="40" fill="url(#grad1)" />
-    <text font-size="15" font-family="Helvetica,Arial, sans-serif" x={{$valor['posX']-15}} y={{$valor['posY']+5}}>{{$valor['str']}}</text>
-    <text font-size="15" font-family="Verdana" x={{$valor['posX']-5}} y={{$valor['posY']+50}}>{{$valor['arv']->getLinhaDerivacao()}}</text>
+    <rect x={{$valor['posX']-($valor['tmh']/2)}} y={{$valor['posY']-20}} rx=20 ry=20 width={{$valor['tmh']}} height="40" fill="url(#grad1)" stroke-width="3" stroke="rgb(105,105,105)" />
+    <text text-anchor="middle" font-size="15" font-weight="bold" fill="white"  font-family="Helvetica, sans-serif, Arial" x={{$valor['posX']}} y={{$valor['posY']+5}}>{{$valor['str']}}</text>
+    <text font-size="15" font-weight="bold" font-family="Verdana" fill="rgb(105,105,105)" x={{$valor['posX']+($valor['tmh']/2)}} y={{$valor['posY']+25}}>{{$valor['arv']->getLinhaDerivacao()}}</text>
+
+
     @if ($valor['arv']->isUtilizado()==1)
         {{--<text font-size="15" font-family="Verdana" x={{$valor['posX']+60}} y={{$valor['posY']+5}}>Utilizado</text>--}}
     @endif
@@ -22,7 +40,7 @@
         
     @endif
 
-    
+
 @endforeach
 
 </svg>

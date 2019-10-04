@@ -44,6 +44,10 @@ class No extends Model
     public function setFilhoCentroNo($centro){
         $this->filho_centro=$centro;
     }
+
+    public function removeFilhoCentroNo(){
+        $this->filho_centro=null;
+    }
    
     public function getFilhoDireitaNo(){
         return $this->filho_direita;

@@ -36,20 +36,13 @@ class Argumento extends Controller
     /*Função que extrai o valor do elemento Lpred do XML, e o atributo de negação */
     private function lpred($lpred){
         $negacao=$lpred->attributes()["NEG"];
-        if ($negacao==""){
-            return ['NEG'=>0, 'PREDICATIVO'=>$lpred->children()->__toString()];
-        }
-        elseif($negacao=="~"){
-            return ['NEG'=>1, 'PREDICATIVO'=>$lpred->children()->__toString()];         
-        }
-        elseif($negacao=="~~"){
-            return ['NEG'=>2, 'PREDICATIVO'=>$lpred->children()->__toString()];         
-        }
-        else{
-            return ['NEG'=>3, 'PREDICATIVO'=>$lpred->children()->__toString()]; 
-        }
+        return ['NEG'=>$this->qntdNegacao($negacao), 'PREDICATIVO'=>$lpred->children()->__toString()];
     }
 
+    public function qntdNegacao($artribudto){
+        return strlen ( $artribudto);
+
+}
     /*Função recebe o elemento CONDICIONAL XML, e retorna o Objeto Predicado*/
     private function condicional($condicional){
         $antecendente_xml =$condicional->children()[0];
@@ -68,7 +61,7 @@ class Argumento extends Controller
             $consequente_no = $this->encontraFilho($consequente_xml);
         }
         $valor = $antecendente_no->getValorPredicado()."→".$consequente_no->getValorPredicado();
-        return new Predicado($valor,0,'CONDICIONAL',$antecendente_no,$consequente_no);
+        return new Predicado($valor,$this->qntdNegacao($condicional->attributes()["NEG"]),'CONDICIONAL',$antecendente_no,$consequente_no);
     }
 
     /*Função recebe o elemento BICONDICIONAL XML, e retorna o Objeto Predicado*/
@@ -89,7 +82,7 @@ class Argumento extends Controller
             $secundario_no = $this->encontraFilho($secundario_xml);
         }
         $valor = $primario_no->getValorPredicado()."↔".$secundario_no->getValorPredicado();
-        return new Predicado($valor,0,'BICONDICIONAL',$primario_no,$secundario_no);
+        return new Predicado($valor,$this->qntdNegacao($bicondicional->attributes()["NEG"]),'BICONDICIONAL',$primario_no,$secundario_no);
     }
 
     /*Função recebe o elemento DISJUNÇÃO XML, e retorna o Objeto Predicado*/
@@ -109,13 +102,14 @@ class Argumento extends Controller
             $secundario_no = $this->encontraFilho($secundario_xml);
         }
         $valor = $primario_no->getValorPredicado()."v".$secundario_no->getValorPredicado();
-        return new Predicado($valor,0,'DISJUNCAO',$primario_no,$secundario_no);
+        return new Predicado($valor,$this->qntdNegacao($disjuncao->attributes()["NEG"]),'DISJUNCAO',$primario_no,$secundario_no);
     }
 
     /*Função recebe o elemento CONJUNÇÃO XML, e retorna o Objeto Predicado*/
     private function conjuncao($conjuncao){
         $primario_xml = $conjuncao->children()[0];
         $secundario_xml = $conjuncao->children()[1];
+
         if ($this->childrenIsLpred($primario_xml)){
             $primario_array = $this->lpred($primario_xml->children());
             $primario_no = new Predicado($primario_array['PREDICATIVO'],$primario_array['NEG'],'PREDICATIVO',null,null);
@@ -129,7 +123,7 @@ class Argumento extends Controller
             $secundario_no = $this->encontraFilho($secundario_xml);
         }
         $valor = $primario_no->getValorPredicado()."^". $secundario_no->getValorPredicado();
-        return new Predicado($valor,0,'CONJUNCAO',$primario_no,$secundario_no);
+        return new Predicado($valor,$this->qntdNegacao($conjuncao->attributes()["NEG"]),'CONJUNCAO',$primario_no,$secundario_no);
     }
 
     /*Função recebe o elemento PREMISSA XML, e retorna o Objeto Premissa*/
@@ -223,7 +217,7 @@ class Argumento extends Controller
                     break;
                 case 'CONDICIONAL':
 
-                    $string = ' ('.$this->stringArg($argumento->getEsquerdaPredicado()).' → '.$this->stringArg($argumento->getDireitaPredicado()).')';
+                    $string = $negacao.'('.$this->stringArg($argumento->getEsquerdaPredicado()).' → '.$this->stringArg($argumento->getDireitaPredicado()).')';
                     break;
                 case 'DISJUNCAO':
                     $string =$negacao.' ('.$this->stringArg($argumento->getEsquerdaPredicado()).' v '.$this->stringArg($argumento->getDireitaPredicado()).')';

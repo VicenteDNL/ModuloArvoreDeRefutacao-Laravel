@@ -27,17 +27,19 @@ class Base extends Controller
     $listaArgumentos = $this->arg->CriaListaArgumentos($xml);
     $arvore = $this->gerador->inicializarDerivacao($listaArgumentos['premissas'],$listaArgumentos['conclusao']);
     $arv =  $this->gerador->arvoreOtimizada($arvore);
-    
+//       $listaArgumentos['premissas'];
+
     $impresaoAvr = $this->geraListaArvore($arv,600,300,0);
-    print_r($arv);
     return view('arvoreotimizada',['arv'=>$impresaoAvr]);
-   }
+  }
 
 
    public function geraListaArvore($arvore,$width,$posX,$posY,$array=[])
    {
-       $posYFilho = $posY + 100;
-       array_push($array,['arv'=>$arvore,'str'=>$this->arg->stringArg($arvore->getValorNo()), 'posX'=>$posX, 'posY'=>$posYFilho]);
+       $posYFilho = $posY + 80;
+       $str = $this->arg->stringArg($arvore->getValorNo());
+       $tmh = strlen ( $str )<=4 ? 40 : (strlen ( $str  )>= 18 ? strlen ( $str) *6 : strlen ( $str )*8.5 );
+       array_push($array,['arv'=>$arvore,'str'=>$str, 'posX'=>$posX, 'posY'=>$posYFilho, 'tmh'=>$tmh]);
        if ($arvore->getFilhoEsquerdaNo() != null) {
            $divisao = $width / ($arvore->getFilhoEsquerdaNo()->getLinhaNo() + 1);
            $posXFilho = 0;
