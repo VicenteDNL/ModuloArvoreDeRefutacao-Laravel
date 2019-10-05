@@ -16,10 +16,10 @@
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" href="#">Arvore Otimizada <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="/ArvoreDeRefutacao/public">Arvore Otimizada <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="#">Por etapa</a>
+                        <a class="nav-link" href="/ArvoreDeRefutacao/public/porEtapa">Por etapa</a>
                     </li>
                     </ul>
                 </div>

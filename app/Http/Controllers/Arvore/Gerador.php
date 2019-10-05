@@ -46,7 +46,7 @@ class Gerador extends Controller
             }
             return $nos;
         }
-    
+
     }
 
      /* Esta função gera e retorna as primeiras linhas da arvores de refutacao, a partir das premissas e conclusão */
@@ -62,7 +62,7 @@ class Gerador extends Controller
                     $ultimoNo->setFilhoCentroNo(new No($premissa->getValorObjPremissa(),null,null,null,$this->getUltimaLinha(),null,null,false,false));
                     $ultimoNo=$ultimoNo->getFilhoCentroNo();
                 }
-                $this->addLinha(); 
+                $this->addLinha();
             }
         }
         if ($conclusao !=null){
@@ -74,7 +74,7 @@ class Gerador extends Controller
                 $ultimoNo->setFilhoCentroNo(new No($conclusao[0]->getValorObjConclusao(),null,null,null,$this->getUltimaLinha(),null,null,false,false));
                 $ultimoNo=$ultimoNo->getFilhoCentroNo();
             }
-            $this->addLinha(); 
+            $this->addLinha();
         }
         return $this->arvore;
     }
@@ -85,7 +85,7 @@ class Gerador extends Controller
         $negacao=false;
         if ($arvore->getValorNo()->getNegadoPredicado()>=2 and $arvore->isUtilizado()==false){
             if ($this->isDecendente($arvore,$noSemBifur)){
-                return $arvore;} 
+                return $arvore;}
         }
         else{
             if ($arvore->getFilhoEsquerdaNo()!=null and $negacao==false ){;
@@ -99,7 +99,7 @@ class Gerador extends Controller
             }
             return $negacao;
         }
-      
+
     }
 
      /* está função encontrar o NO que possui bifurcação e ainda nao utilizado e o retorna No, se nao encontrar retorna false, buscando do nó raiz até os nos folhas*/
@@ -107,11 +107,11 @@ class Gerador extends Controller
          $NoBifucacao = false;
          if (in_array($arvore->getValorNo()->getTipoPredicado(), ['DISJUNCAO','CONDICIONAL','BICONDICIONAL']) and $arvore->getValorNo()->getNegadoPredicado()==0 and $arvore->isUtilizado()==false){
             if ($this->isDecendente($arvore,$noSemBifur)){
-                return $arvore;} 
+                return $arvore;}
          }
          else if (in_array($arvore->getValorNo()->getTipoPredicado(), ['CONJUNCAO','BICONDICIONAL']) and $arvore->getValorNo()->getNegadoPredicado()==1 and $arvore->isUtilizado()==false){
             if ($this->isDecendente($arvore,$noSemBifur)){
-                return $arvore;} 
+                return $arvore;}
          }
          else{
             if ($arvore->getFilhoEsquerdaNo()!=null and $NoBifucacao==false){
@@ -132,12 +132,12 @@ class Gerador extends Controller
          $NoSemBifucacao = false;
          if ($arvore->getValorNo()->getTipoPredicado()== 'CONJUNCAO' and $arvore->getValorNo()->getNegadoPredicado()==0 and $arvore->isUtilizado()==false){
             if ($this->isDecendente($arvore,$noSemBifur)){
-                return $arvore;} 
-         
+                return $arvore;}
+
          }
          else if (in_array($arvore->getValorNo()->getTipoPredicado(), ['DISJUNCAO','CONDICIONAL']) and $arvore->getValorNo()->getNegadoPredicado()==1 and $arvore->isUtilizado()==false){
             if ($this->isDecendente($arvore,$noSemBifur)){
-                return $arvore;} 
+                return $arvore;}
          }
          else{
              if ($arvore->getFilhoEsquerdaNo()!=null and $NoSemBifucacao==false){
@@ -179,26 +179,26 @@ class Gerador extends Controller
 
      /*esta funcao recebe uma arvore (a partir de um NO qualquer), e o No de interese, afim de verificar se o no raiz da arvore é parente do no de interesse, e retorna true se a condicao for vedadeira e false se nao for
      verdadeira*/
-     public function isDecendente($arvore,$no){   
+     public function isDecendente($arvore,$no){
          $noDescendente=false;
-    
+
         if ($arvore->getValorNo()->getValorPredicado() == $no->getValorNo()->getValorPredicado() and $arvore->getValorNo()->getNegadoPredicado() == $no->getValorNo()->getNegadoPredicado()){
-           
+
             return true;
         }
         else {
             if ($arvore->getFilhoCentroNo()!=null and $noDescendente==false){
-            
+
                 $noDescendente = $this->isDecendente($arvore->getFilhoCentroNo(),$no);
-                
+
             }
             if ($arvore->getFilhoEsquerdaNo()!=null and $noDescendente==false ){
-                
-                $noDescendente = $this->isDecendente($arvore->getFilhoEsquerdaNo(),$no);     
+
+                $noDescendente = $this->isDecendente($arvore->getFilhoEsquerdaNo(),$no);
             }
             if ($arvore->getFilhoDireitaNo()!=null and $noDescendente==false){
                 $noDescendente = $this->isDecendente($arvore->getFilhoDireitaNo(),$no);
-                        
+
             }
             return $noDescendente;
 
@@ -209,9 +209,9 @@ class Gerador extends Controller
      public function encontraContradicao($arvore,$no){
         $contradicao = false;
          if ($arvore->getValorNo()->getValorPredicado() == $no->getValorNo()->getValorPredicado()){
-           
+
              $negacaoNo = $no->getValorNo()->getNegadoPredicado();
-             
+
              if ($negacaoNo == 1 and $arvore->getValorNo()->getNegadoPredicado()==0){
                  if ($this->isDecendente($arvore,$no)){
 
@@ -232,7 +232,7 @@ class Gerador extends Controller
                     $contradicao =  $this->encontraContradicao($arvore->getFilhoDireitaNo(),$no);
                 }
                 return $contradicao;
-                
+
             }
         }
         else {
@@ -247,12 +247,12 @@ class Gerador extends Controller
             }
             return $contradicao;
         }
-         
+
      }
 
      /*esta função recebe a referencia do No que vai sofrer inserção, a arvore atual, e o array dos nos resultantes da aplicacao da regra de derivacao e faz a verificação da contradicao do novo no*/
      public function criarNoBifurcado($noInsercao,$arvore,$array_filhos,$linhaDerivado){
-  
+
         $noInsercao->setFilhoEsquerdaNo(new No($array_filhos['esquerda'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,$linhaDerivado,false,false));
 
         $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoEsquerdaNo());
@@ -262,7 +262,7 @@ class Gerador extends Controller
 
         $noInsercao->setFilhoDireitaNo(new No($array_filhos['direita'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,$linhaDerivado,false,false));
         $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoDireitaNo());
-        if($contradicao!=false){   
+        if($contradicao!=false){
             $noInsercao->getFilhoDireitaNo()->FecharRamo($contradicao->getLinhaNo());
         }
      }
@@ -332,7 +332,7 @@ class Gerador extends Controller
             $primeiroNo->setLinhaNo($noInsercao->getLinhaNo()+1);
             $segundoNo->setLinhaNo($noInsercao->getLinhaNo()+2);
          }
-  
+
      }
 
      /*esta função recebe a referencia do No que vai sofrer inserção, a arvore atual, e o array dos nos resultantes da aplicacao da regra de derivacao e faz a verificação da contradicao do novo no*/
@@ -348,17 +348,17 @@ class Gerador extends Controller
 
      public function arvoreOtimizada($arvore){
         $noInsercao=$this->proximoNoParaInsercao($arvore);
-        
+
         if ($noInsercao==null){
             return $arvore;
-            
+
         }
         else{
 
             $no =$this->encontraDuplaNegacao($arvore,$noInsercao);
             $noBifur =$this->encontraNoBifuca($arvore,$noInsercao);
             $noSemBifur =$this->encontraNoSemBifucacao($arvore,$noInsercao);
-           
+
              if ($no){
                  $array_filhos =$this->regras->DuplaNeg($no->getValorNo());
                  $no->utilizado(true);
@@ -400,7 +400,7 @@ class Gerador extends Controller
                      $this->criarNoBifurcadoDuplo($noInsercao,$arvore,$array_filhos,$noBifur->getLinhaNo());
                  }
                  else if ($noBifur->getValorNo()->getTipoPredicado()== 'CONJUNCAO' and $noBifur->getValorNo()->getNegadoPredicado()==1){
-                      
+
                      $array_filhos = $this->regras->conjuncaoNeg($noBifur->getValorNo());
                      $noBifur->utilizado(true);
                      $this->criarNoBifurcado($noInsercao,$arvore,$array_filhos,$noBifur->getLinhaNo());
@@ -417,6 +417,83 @@ class Gerador extends Controller
      }
 
 
+     public function possibilidades($arvore,$array=[]){
+
+        if ($arvore->getValorNo()->getNegadoPredicado()>2){
+            array_push($array, 'Negação Dupla');
+
+        }
+        elseif($arvore->getValorNo()->getTipoPredicado()=='CONJUNCAO' and $arvore->getValorNo()->getNegadoPredicado()==0){
+            array_push($array, 'Conjunção');
+        }
+        elseif ($arvore->getValorNo()->getTipoPredicado()== 'DISJUNCAO' and $arvore->getValorNo()->getNegadoPredicado()==1){
+            array_push($array, ' Negação da Disjunção');
+        }
+        elseif ($arvore->getValorNo()->getTipoPredicado()== 'CONDICIONAL' and $arvore->getValorNo()->getNegadoPredicado()==1) {
+            array_push($array, 'Negacão da Condicional');
+        }
+        elseif($arvore->getValorNo()->getTipoPredicado()=='DISJUNCAO' and $arvore->getValorNo()->getNegadoPredicado()==0){
+            array_push($array, 'Disjunção');
+            }
+        elseif ($arvore->getValorNo()->getTipoPredicado()== 'CONDICIONAL' and $arvore->getValorNo()->getNegadoPredicado()==0){
+            array_push($array, 'Condicional');
+            }
+        elseif ($arvore->getValorNo()->getTipoPredicado()== 'BICONDICIONAL' and $arvore->getValorNo()->getNegadoPredicado()==0){
+            array_push($array, 'Bicondicional');
+        }
+        elseif ($arvore->getValorNo()->getTipoPredicado()== 'CONJUNCAO' and $arvore->getValorNo()->getNegadoPredicado()==1){
+            array_push($array, 'Negação da Conjunção');
+            }
+        elseif ($arvore->getValorNo()->getTipoPredicado()== 'BICONDICIONAL' and $arvore->getValorNo()->getNegadoPredicado()==1){
+            array_push($array, 'Negação da Bicondicional');
+
+            }
+
+
+
+        if ($arvore->getFilhoEsquerdaNo()==null and $arvore->getFilhoCentroNo()==null and$arvore->getFilhoDireitaNo()==null){
+            return $array;
+        }
+        else{
+
+            if ($arvore->getFilhoCentroNo()!=null ){
+                 return $this->possibilidades($arvore->getFilhoCentroNo(),$array);
+            }
+            if ($arvore->getFilhoEsquerdaNo()!=null ){
+                return $this->possibilidades($arvore->getFilhoEsquerdaNo(),$array);
+            }
+            if ($arvore->getFilhoDireitaNo()!=null){
+                return $this->possibilidades($arvore->getFilhoDireitaNo(),$array);
+            }
+        }
+
+
+
+    }
+
+     public function arrayPerguntas($arvore){
+         $listaPerguntas = $this->possibilidades($arvore);
+
+        if (count( $listaPerguntas)<3){
+            $possibilidades = ['Negação da Bicondicional','Negação da Conjunção','Bicondicional','Condicional','Disjunção','Negacão da Condicional','Negação da Disjunção','Conjunção','Negação Dupla'];
+
+            $comp=false;
+            while($comp==false){
+                $nova = array_rand($possibilidades,1);
+                if (in_array($possibilidades[$nova],$listaPerguntas)==false){
+                        array_push($listaPerguntas,$possibilidades[$nova]);
+                        if(count($listaPerguntas)==3){
+                            $comp=true;
+                        }
+                }
+            }
+        }
+
+        shuffle($listaPerguntas);
+        return $listaPerguntas;
+
+
+     }
 
 
 }

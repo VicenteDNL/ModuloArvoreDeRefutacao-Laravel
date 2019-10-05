@@ -20,7 +20,8 @@
             <div class="container-fluid">
                     <div class="card" style="margin-top: 20px;">
                         <div class="card-body">
-                            <p>Informação da formula</p>
+                            <p>{{$formulaGerada}}</p>
+
                         </div>
                     </div>
                 </div>
@@ -35,12 +36,39 @@
                             </div>
                                 <input type="hidden" value={{csrf_token()}}>
                             <div class="form-group">
-                                <button type="submit" class="btn btn-info">Gerar</button>
+                                <button type="submit" class="btn btn-info">Upload</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
+
+            <div class="container-fluid">
+                <div class="card" style="margin-top: 20px;">
+                    <div class="card-body">
+                        <table class="table table-striped">
+
+                            <tbody>
+                                @foreach($listaFormulas as $formula)
+                              <tr>
+                              <th scope="row">{{$formula['xml']}}</th>
+                                <td>{{$formula['str']}}</td>
+                                <td>
+                                    <form method="post" action="{{URL::to('/Arvore')}}">
+                                        {{ csrf_field() }}
+                                      <input type="hidden" name='idFormula' value={{$formula['xml']}}>
+                                      <button type="submit" class="btn btn-outline-info">Gerar</button>
+                                    </form>
+
+                              </tr>
+                              @endforeach
+
+                            </tbody>
+                          </table>
+                    </div>
+                </div>
+            </div>
+
 
 
 

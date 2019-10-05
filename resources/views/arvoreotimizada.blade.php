@@ -3,15 +3,16 @@
 @section('upload')
 <svg width="600" height="600">
 @for($i = 1 ; $i<count($arv);$i++)
+    @if($arv[$i-1]['posY']>=($arv[$i]['posY']))
+        @for($e = $i-1 ; $e>0;$e--)
+            @if($arv[$e]['posY']<($arv[$i]['posY']))
+                <line x1={{$arv[$e]['posX']}} y1={{$arv[$e]['posY']+27}} x2={{$arv[$i]['posX']}} y2={{$arv[$i]['posY']-27}} stroke="rgb(105,105,105)" stroke-width=2   stroke-linecap="butt"/>
+                @break
+            @endif
+        @endfor
+    @else
         <line x1={{$arv[$i-1]['posX']}} y1={{$arv[$i-1]['posY']+27}} x2={{$arv[$i]['posX']}} y2={{$arv[$i]['posY']-27}} stroke="rgb(105,105,105)" stroke-width=2   stroke-linecap="butt"/>
-{{--        @if ($arv[$i-1]['arv']->getLinhaDerivacao()==0)--}}
-{{--                <line x1={{$arv[$i-2]['posX']}} y1={{$arv[$i-2]['posY']+27}} x2={{$arv[$i]['posX']}} y2={{$arv[$i]['posY']-27}} stroke="rgb(105,105,105)" stroke-width=2   stroke-linecap="butt"/>--}}
-{{--        @elseif($arv[$i-1]['arv']->getLinhaDerivacao()==$arv[$i]['arv']->getLinhaDerivacao())--}}
-{{--            <line x1={{$arv[$i-2]['posX']}} y1={{$arv[$i-2]['posY']+27}} x2={{$arv[$i]['posX']}} y2={{$arv[$i]['posY']-27}} stroke="rgb(105,105,105)" stroke-width=2   stroke-linecap="butt"/>--}}
-{{--        @else--}}
-{{--            <line x1={{$arv[$i-1]['posX']}} y1={{$arv[$i-1]['posY']+27}} x2={{$arv[$i]['posX']}} y2={{$arv[$i]['posY']-27}} stroke="rgb(105,105,105)" stroke-width=2   stroke-linecap="butt"/>--}}
-{{--        @endif--}}
-
+    @endif
 @endfor
 @foreach($arv as $valor)
 

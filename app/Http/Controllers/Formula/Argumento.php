@@ -195,8 +195,8 @@ class Argumento extends Controller
         }
 
         return ["premissas" =>$arrayPremissas, "conclusao" =>$arrayConclusao];
-        
-        
+
+
     }
 
     public function stringArg($argumento){
@@ -237,5 +237,16 @@ class Argumento extends Controller
             return $string;
         }
 
+    }
+
+    public function stringFormula($xml){
+        $formula = '';
+        $listaArgumentos=$this->CriaListaArgumentos($xml);
+
+        foreach ($listaArgumentos['premissas'] as $premissa){
+            $formula = $formula.' '.$this->stringArg( $premissa->getValorObjPremissa()).', ';
+        }
+        $formula = $formula.' |- '.$this->stringArg($listaArgumentos['conclusao'][0]->getValorObjConclusao());
+        return $formula;
     }
 }

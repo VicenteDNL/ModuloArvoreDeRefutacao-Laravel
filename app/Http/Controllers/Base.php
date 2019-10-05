@@ -19,19 +19,120 @@ class Base extends Controller
       $this->arg = new Argumento;
       $this->gerador = new Gerador;
 }
+public function Index(){
 
-   public function CarragaXml(Request $request){
+    $diretorio = scandir('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas');
+    $num = count($diretorio) - 2;
+    $listaFormulas=[];
+    for($i=1; $i <= $num ; $i++){
+        $xml = simplexml_load_file('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas\formula-'.$i.'.xml');
+        $formula = [
+            'str'=>$this->arg->stringFormula($xml),
+            'xml'=>$i
+        ];
+        array_push($listaFormulas,$formula);
+    }
 
-    $xml = simplexml_load_file($request->file('arquivo'));
+    return view('arvore',['listaFormulas'=> $listaFormulas, 'formulaGerada'=> 'Nenhuma Fórmula Carregada...']);
+    }
 
+
+   public function SalvarXml(Request $request){
+
+    if ($request->hasFile('arquivo') && $request->file('arquivo')->isValid()){
+
+        $diretorio = scandir('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas');
+        $num = count($diretorio) - 1;
+
+        $request->file('arquivo')->storeAs('formulas', 'formula-'.$num.'.xml');
+        return $this->Index();
+    }
+
+  }
+
+public function CriarArvoreOtimizada(Request $request){
+    $id = $request->all()['idFormula'];
+    $xml = simplexml_load_file('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas\formula-'.$id.'.xml');
     $listaArgumentos = $this->arg->CriaListaArgumentos($xml);
     $arvore = $this->gerador->inicializarDerivacao($listaArgumentos['premissas'],$listaArgumentos['conclusao']);
     $arv =  $this->gerador->arvoreOtimizada($arvore);
-//       $listaArgumentos['premissas'];
-
     $impresaoAvr = $this->geraListaArvore($arv,600,300,0);
-    return view('arvoreotimizada',['arv'=>$impresaoAvr]);
+    $formulaGerada = $this->arg->stringFormula($xml);
+    $diretorio = scandir('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas');
+    $num = count($diretorio) - 2;
+    $listaFormulas=[];
+    for($i=1; $i <= $num ; $i++){
+        $xml = simplexml_load_file('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas\formula-'.$i.'.xml');
+        $formula = [
+            'str'=>$this->arg->stringFormula($xml),
+            'xml'=>$i
+        ];
+        array_push($listaFormulas,$formula);
+    }
+
+
+    return view('arvoreotimizada',['arv'=>$impresaoAvr,'listaFormulas'=> $listaFormulas, 'formulaGerada'=> $formulaGerada]);
+}
+
+  public function CarragaXmlPorEtapa(Request $request){
+    $xml = simplexml_load_file($request->file('arquivo'));
+    $listaArgumentos = $this->arg->CriaListaArgumentos($xml);
+    $arvore = $this->gerador->inicializarDerivacao($listaArgumentos['premissas'],$listaArgumentos['conclusao']);
+    $json = json_encode ($xml, JSON_FORCE_OBJECT);
+    $impresaoAvr = $this->geraListaArvore($arvore,600,300,0);
+    // var_dump($json);
+
+    var_dump(json_decode ($json));
+
+    // return view('porEtapa.arvorePorEtapa',['arv'=>$impresaoAvr,'json'=>$json]);
   }
+
+
+
+
+  public function PorEtapa(Request $request){
+    $diretorio = scandir('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas');
+    $num = count($diretorio) - 2;
+    $listaFormulas=[];
+    for($i=1; $i <= $num ; $i++){
+        $xml = simplexml_load_file('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas\formula-'.$i.'.xml');
+        $formula = [
+            'str'=>$this->arg->stringFormula($xml),
+            'xml'=>$i
+        ];
+        array_push($listaFormulas,$formula);
+    }
+
+    return view('porEtapa.baseEtapa',['listaFormulas'=> $listaFormulas, 'formulaGerada'=> 'Nenhuma Fórmula Carregada...']);
+
+  }
+
+
+  public function Inicializando(Request $request){
+        $id = $request->all()['idFormula'];
+    $xml = simplexml_load_file('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas\formula-'.$id.'.xml');
+    $listaArgumentos = $this->arg->CriaListaArgumentos($xml);
+    $arvore = $this->gerador->inicializarDerivacao($listaArgumentos['premissas'],$listaArgumentos['conclusao']);
+
+    $impresaoAvr = $this->geraListaArvore($arvore,600,300,0);
+    $formulaGerada = $this->arg->stringFormula($xml);
+    $diretorio = scandir('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas');
+    $num = count($diretorio) - 2;
+    $listaFormulas=[];
+    for($i=1; $i <= $num ; $i++){
+        $xml = simplexml_load_file('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas\formula-'.$i.'.xml');
+        $formula = [
+            'str'=>$this->arg->stringFormula($xml),
+            'xml'=>$i
+        ];
+        array_push($listaFormulas,$formula);
+    }
+
+    $regras=$this->gerador->arrayPerguntas($arvore);
+    return view('porEtapa.arvorePorEtapa',['arv'=>$impresaoAvr,'listaFormulas'=> $listaFormulas, 'formulaGerada'=> $formulaGerada, 'regras'=>$regras]);
+  }
+
+
 
 
    public function geraListaArvore($arvore,$width,$posX,$posY,$array=[])
