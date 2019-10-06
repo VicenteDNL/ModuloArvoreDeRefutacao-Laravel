@@ -34,7 +34,7 @@ class Base extends Controller
     #Salva na pasta public o Arquivo XML
    public function SalvarXml(Request $request){
     if ($request->hasFile('arquivo') && $request->file('arquivo')->isValid()){
-        $diretorio = scandir('C:\Users\Jheymerson\Desktop\Danilo\public\storage\formulas');
+        $diretorio = scandir('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas');
         $num = count($diretorio) - 1;
         $request->file('arquivo')->storeAs('formulas', 'formula-'.$num.'.xml');
         return $this->Index();
@@ -46,7 +46,7 @@ class Base extends Controller
     public function CriarArvoreOtimizada(Request $request){
         # Busca XML no diretorio
         $id = $request->all()['idFormula'];
-        $xml = simplexml_load_file('C:\Users\Jheymerson\Desktop\Danilo\public\storage\formulas\formula-'.$id.'.xml');
+        $xml = simplexml_load_file('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas\formula-'.$id.'.xml');
         #--------
 
         #Cria a arvore passando o XML
@@ -87,7 +87,7 @@ class Base extends Controller
 
         # Busca XML no diretorio
         $idFormula = $formulario['idFormula'];
-        $xml = simplexml_load_file('C:\Users\Jheymerson\Desktop\Danilo\public\storage\formulas\formula-'.$idFormula.'.xml');
+        $xml = simplexml_load_file('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas\formula-'.$idFormula.'.xml');
         #-----
 
         #Cria a arvore passando o XML
@@ -120,7 +120,7 @@ class Base extends Controller
     public function ValidaResposta(Request $request) {
 
         $formulario = $request->all();
-        $xml = simplexml_load_file('C:\Users\Jheymerson\Desktop\Danilo\public\storage\formulas\formula-'.$formulario['idFormula'].'.xml');
+        $xml = simplexml_load_file('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas\formula-'.$formulario['idFormula'].'.xml');
 
         $listaArgumentos = $this->arg->CriaListaArgumentos($xml);
         $arvore = $this->gerador->inicializarDerivacao($listaArgumentos['premissas'],$listaArgumentos['conclusao']);
