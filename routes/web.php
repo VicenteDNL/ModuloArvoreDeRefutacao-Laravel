@@ -13,7 +13,8 @@ Route::post('Arvore', 'Base@CriarArvoreOtimizada');
 Route::get('/porEtapa','Base@PorEtapa');
 
 
-Route::post('porEtapa/inicializa', 'Base@CarragaXmlPorEtapa');
 
 
 Route::post('porEtapa/Inicializado', 'Base@Inicializando');
+
+Route::post('porEtapa/Gerando', 'Base@ValidaResposta');

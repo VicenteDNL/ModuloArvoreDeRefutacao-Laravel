@@ -1,29 +1,40 @@
 @extends('baseEtapa')
 {{-- @section('arovreObJ',$json) --}}
 @section('alternativas')
+
 <div class="card" style="margin-top: 20px;">
         <div class="card-body">
             <div class="container-fluid">
-                <form method="post" action="{{URL::to('/porEtapa/gerando')}}" enctype="multipart/form-data">
+                <form method="post" action="{{URL::to('/porEtapa/Gerando')}}" enctype="multipart/form-data">
                     {{ csrf_field() }}
 
+                    <input type="hidden"  name="idFormula" value={{$idFormula}} class="form-control">
+                    <input type="hidden"  name="derivacoes" value={{$listaDerivacoes}} class="form-control">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Linha</span>
+                        </div>
+                        <input type="number" name="linha"  class="form-control" required>
+                    </div>
+
                     <div class="row text-center">
+
                         <div class="col">
                             <div class="custom-control custom-radio">
-                                <input type="radio" id="customRadio1" name="customRadio" class="custom-control-input">
-                                <label class="custom-control-label" for="customRadio1">{{$regras[0]}}</label>
+                                <input type="radio" id="customRadio1" value={{trim($regras[0])}} name="regra" class="custom-control-input" required>
+                                <label class="custom-control-label" for="customRadio1">{{str_replace("_", " da ", $regras[0])}}</label>
                             </div>
                         </div>
                         <div class="col">
                             <div class="custom-control custom-radio">
-                                <input type="radio" id="customRadio2" name="customRadio" class="custom-control-input">
-                                <label class="custom-control-label" for="customRadio2">{{$regras[1]}}</label>
+                                <input type="radio" id="customRadio2" value={{trim($regras[1])}} name="regra" class="custom-control-input" required>
+                                <label class="custom-control-label" for="customRadio2">{{str_replace("_", " da ", $regras[1])}}</label>
                             </div>
                         </div>
                         <div class="col">
                             <div class="custom-control custom-radio">
-                                <input type="radio" id="customRadio3" name="customRadio" class="custom-control-input">
-                                <label class="custom-control-label" for="customRadio3">{{$regras[2]}}</label>
+                                <input type="radio" id="customRadio3" value={{trim($regras[2])}} name="regra" class="custom-control-input" required>
+                                <label class="custom-control-label" for="customRadio3">{{str_replace("_", " da ", $regras[2])}}</label>
                             </div>
                         </div>
                     </div>

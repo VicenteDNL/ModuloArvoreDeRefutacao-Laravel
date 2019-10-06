@@ -25,7 +25,7 @@
                 <div class="container-fluid">
                         <div class="card" style="margin-top: 20px;">
                             <div class="card-body">
-                                <p>{{$formulaGerada}}</p>
+                                <p>{{$formulaGerada++}}</p>
                             </div>
                         </div>
                     </div>

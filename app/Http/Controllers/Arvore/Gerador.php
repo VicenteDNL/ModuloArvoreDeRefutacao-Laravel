@@ -25,27 +25,27 @@ class Gerador extends Controller
      }
 
     /*Recebe o numero da linha  e a arvore e retorna todos os nos que estão no mesma linha*/
-    public function getlinha($linha,$arvore){
-        $nos=[];    //corrigir retorno mais de um elemento
+    public function getNoslinha($arvore,$linha, $nos=[]){
+          //corrigir retorno mais de um elemento
+        $nose=[];
         if ($arvore->getLinhaNo()==$linha){
-            $arvoreRetorno = clone $arvore;
-            $arvoreRetorno->setFilhoDireitaNo(null);
-            $arvoreRetorno->setFilhoEsquerdaNo(null);
-            $arvoreRetorno->setFilhoCentroNo(null);
-            return $arvoreRetorno;
-        }
+            array_push($nos,$arvore);
+
+            }
         else{
             if($arvore->getFilhoEsquerdaNo()!=null){
-                $nos =  $this->getLinha($linha,$arvore->getFilhoEsquerdaNo());
+                $nose= $this->getNoslinha($arvore->getFilhoEsquerdaNo(),$linha, $nos);
             }
             if($arvore->getFilhoCentroNo()!=null){
-                $nos = $this->getLinha($linha,$arvore->getFilhoCentroNo());
+                $nose= $this->getNoslinha($arvore->getFilhoCentroNo(),$linha, $nos);
             }
             if($arvore->getFilhoDireitaNo()!=null){
-                $nos =  $this->getLinha($linha,$arvore->getFilhoDireitaNo());
+                $nose= $this->getNoslinha($arvore->getFilhoDireitaNo(),$linha, $nos);
             }
-            return $nos;
+            return $nose;
         }
+        return $nos;
+
 
     }
 
@@ -421,16 +421,15 @@ class Gerador extends Controller
 
         if ($arvore->getValorNo()->getNegadoPredicado()>2){
             array_push($array, 'Negação Dupla');
-
         }
         elseif($arvore->getValorNo()->getTipoPredicado()=='CONJUNCAO' and $arvore->getValorNo()->getNegadoPredicado()==0){
             array_push($array, 'Conjunção');
         }
         elseif ($arvore->getValorNo()->getTipoPredicado()== 'DISJUNCAO' and $arvore->getValorNo()->getNegadoPredicado()==1){
-            array_push($array, ' Negação da Disjunção');
+            array_push($array, ' Negação_Disjunção');
         }
         elseif ($arvore->getValorNo()->getTipoPredicado()== 'CONDICIONAL' and $arvore->getValorNo()->getNegadoPredicado()==1) {
-            array_push($array, 'Negacão da Condicional');
+            array_push($array, 'Negacão_Condicional');
         }
         elseif($arvore->getValorNo()->getTipoPredicado()=='DISJUNCAO' and $arvore->getValorNo()->getNegadoPredicado()==0){
             array_push($array, 'Disjunção');
@@ -442,10 +441,10 @@ class Gerador extends Controller
             array_push($array, 'Bicondicional');
         }
         elseif ($arvore->getValorNo()->getTipoPredicado()== 'CONJUNCAO' and $arvore->getValorNo()->getNegadoPredicado()==1){
-            array_push($array, 'Negação da Conjunção');
+            array_push($array, 'Negação_Conjunção');
             }
         elseif ($arvore->getValorNo()->getTipoPredicado()== 'BICONDICIONAL' and $arvore->getValorNo()->getNegadoPredicado()==1){
-            array_push($array, 'Negação da Bicondicional');
+            array_push($array, 'Negação_Bicondicional');
 
             }
 
@@ -475,7 +474,7 @@ class Gerador extends Controller
          $listaPerguntas = $this->possibilidades($arvore);
 
         if (count( $listaPerguntas)<3){
-            $possibilidades = ['Negação da Bicondicional','Negação da Conjunção','Bicondicional','Condicional','Disjunção','Negacão da Condicional','Negação da Disjunção','Conjunção','Negação Dupla'];
+            $possibilidades = ['Negação_Bicondicional','Negação_Conjunção','Bicondicional','Condicional','Disjunção','Negacão_Condicional','Negação_Disjunção','Conjunção','Negação_Dupla'];
 
             $comp=false;
             while($comp==false){
@@ -491,9 +490,96 @@ class Gerador extends Controller
 
         shuffle($listaPerguntas);
         return $listaPerguntas;
-
-
      }
 
+     public function derivar($arvore, $linha,$regra){
+        $noInsercao = $this->proximoNoParaInsercao($arvore);
+
+        $no =[];
+        $listaNos=$this->getNoslinha($arvore, (int)$linha);
+        foreach($listaNos as $noValido){
+
+
+            $noDescendente =$this->isDecendente($noValido,$noInsercao);
+            if($noDescendente!=false){
+                $no=$noValido;
+            }
+        }
+
+        if($no==null){
+            return ['sucesso'=>false, 'messagem'=>'Linha não Existe'];
+        }
+        else{
+            print_r($no->getValorNo()->getTipoPredicado());
+            print_r($no->getValorNo()->getNegadoPredicado());
+            if($no->getValorNo()->getTipoPredicado()=='PREMISSA' OR $no->getValorNo()->getTipoPredicado()=='CONCLUSAO' OR $no->getValorNo()->getTipoPredicado()=='PREDICATIVO'){
+                return ['sucesso'=>false, 'messagem'=>'Linha Invalida'];
+            }
+            elseif($no->getValorNo()->getNegadoPredicado()>2  and $regra=='Negação Dupla'){
+                $array_filhos =$this->regras->DuplaNeg($no->getValorNo());
+                $no->utilizado(true);
+                $this->criarNo($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                return ['sucesso'=>true, 'messagem'=>'Negação_Dupla','arv'=>$arvore];
+            }
+            elseif($no->getValorNo()->getTipoPredicado()=='CONJUNCAO' and $no->getValorNo()->getNegadoPredicado()==0 and $regra=='Conjunção'){
+                $array_filhos = $this->regras->conjuncao($no->getValorNo());
+                $no->utilizado(true);
+                $this->criarNoSemBifucacao($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                return ['sucesso'=>true, 'messagem'=>'Conjunção','arv'=>$arvore];
+            }
+            elseif ($no->getValorNo()->getTipoPredicado()== 'DISJUNCAO' and $no->getValorNo()->getNegadoPredicado()==1  and $regra=='Negação_Disjunção'){
+                $array_filhos = $this->regras->disjuncaoNeg($no->getValorNo());
+                $no->utilizado(true);
+                $this->criarNoSemBifucacao($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                return ['sucesso'=>true, 'messagem'=>'Negação_Disjunção','arv'=>$arvore];
+            }
+            elseif ($no->getValorNo()->getTipoPredicado()== 'CONDICIONAL' and $no->getValorNo()->getNegadoPredicado()==1  and $regra=='Negacão_Condicional') {
+                $array_filhos = $this->regras->condicionalNeg($no->getValorNo());
+                $no->utilizado(true);
+                $this->criarNoSemBifucacao($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                return ['sucesso'=>true, 'messagem'=>'Negacão_Condicional','arv'=>$arvore];
+            }
+            elseif($no->getValorNo()->getTipoPredicado()=='DISJUNCAO' and $no->getValorNo()->getNegadoPredicado()==0  and $regra=='Disjunção'){
+                $array_filhos = $this->regras->disjuncao($no->getValorNo());
+                 $no->utilizado(true);
+                 $this->criarNoBifurcado($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                 return ['sucesso'=>true, 'messagem'=>'Disjunção','arv'=>$arvore];
+            }
+            elseif ($no->getValorNo()->getTipoPredicado()== 'CONDICIONAL' and $no->getValorNo()->getNegadoPredicado()==0  and $regra=='Condicional'){
+                $array_filhos = $this->regras->condicional($no->getValorNo());
+                $no->utilizado(true);
+                $this->criarNoBifurcado($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                return ['sucesso'=>true, 'messagem'=>'Condicional','arv'=>$arvore];
+            }
+            elseif ($no->getValorNo()->getTipoPredicado()== 'BICONDICIONAL' and $no->getValorNo()->getNegadoPredicado()==0  and $regra=='Bicondicional'){
+                $array_filhos = $this->regras->bicondicional($no->getValorNo());
+                 $no->utilizado(true);
+                 $this->criarNoBifurcadoDuplo($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                 return ['sucesso'=>true, 'messagem'=>'Bicondicional','arv'=>$arvore];
+            }
+            elseif ($no->getValorNo()->getTipoPredicado()== 'CONJUNCAO' and $no->getValorNo()->getNegadoPredicado()==1  and $regra=='Negação_Conjunção'){
+                $array_filhos = $this->regras->conjuncaoNeg($no->getValorNo());
+                $no->utilizado(true);
+                $this->criarNoBifurcado($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                return ['sucesso'=>true, 'messagem'=>'Negação_Conjunção','arv'=>$arvore];
+            }
+            elseif ($no->getValorNo()->getTipoPredicado()== 'BICONDICIONAL' and $no->getValorNo()->getNegadoPredicado()==1  and $regra=='Negação_Bicondicional'){
+                $array_filhos = $this->regras->bicondicionalNeg($no->getValorNo());
+                 $no->utilizado(true);
+                 $this->criarNoBifurcadoDuplo($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                 return ['sucesso'=>true, 'messagem'=>'Negação_Bicondicional','arv'=>$arvore];
+
+                }
+            return ['sucesso'=>false, 'messagem'=>'Regra Invalida'];
+
+        }
+
+
+
+        // $nosLinha =$this->encontraDuplaNegacao($arvore,$noInsercao);
+        //     $noBifur =$this->encontraNoBifuca($arvore,$noInsercao);
+        //     $noSemBifur =$this->encontraNoSemBifucacao($arvore,$noInsercao);
+
+     }
 
 }
