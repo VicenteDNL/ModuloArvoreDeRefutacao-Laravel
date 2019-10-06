@@ -13,11 +13,32 @@ body{
 	background: linear-gradient(to left, #23a3f7, #1799f8, #1c8ff8, #2c84f6, #3e78f3);
 }
 
+.bg-gradient-green{
+	background: linear-gradient(to right, #3ef39f, #00ebc6, #00e0e4, #00d3f5, #23c4f7);
+}
+
+.bg-pink{
+	background: rgb(255, 0, 230,0.1) !important;
+}
+
+.text-pink{
+	color: #FF00EB;;
+}
+
 /* Badge personalizado */
 .badge{
     border-radius: 6px;
     border: 1px dashed #FFFFFF;
 	font-size: 12px !important;
+}
+
+/* Badge personalizado */
+.badge-custom{
+	width: 240px;
+	height: 60px;
+    border-radius: 6px;
+    border: 1px dashed rgb(255, 0, 230,0.6);
+	font-size: 16px !important;
 }
 
 /* Tooltip personalizado */
@@ -42,6 +63,12 @@ body{
 
 .rounded-05rem{
     border-radius: 0.5rem !important;
+}
+
+/* Bordas superiores arredondadas em 50px */
+.rounded-top-15{
+    border-top-left-radius: 15px !important;
+    border-top-right-radius: 15px !important;
 }
 
 /* Bordas inferiores arredondadas em 50px */

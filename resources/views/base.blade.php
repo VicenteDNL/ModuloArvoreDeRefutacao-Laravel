@@ -7,8 +7,8 @@
 
         <!-- CSS BOOTSTRAP -->
         <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
-        <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-grid.min.css">
-        <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-reboot.min.css">
+        <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-grid.css">
+        <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap-reboot.css">
 
         <!-- CSS Customizado -->
         <link rel="stylesheet" type="text/css" href="bootstrap/css/custom.css">

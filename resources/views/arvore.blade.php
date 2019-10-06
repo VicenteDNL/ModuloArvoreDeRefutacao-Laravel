@@ -20,26 +20,22 @@
         </div>
         <div class="col-4">
             <div class="card shadow-sm bg-white rounded-15">
+                <div class="card-header bg-gradient-blue text-white rounded-top-15 d-flex justify-content-center m-0">
+                    Fórmula
+                </div>
                 <div class="card-body">
                     <div class="col d-flex justify-content-center">
-                        <div class="row">
-                            <p>Fórmula</p>
-                        </div>
-                    </div>
-                    <div class="col d-flex justify-content-center">
-                        <div class="row">
-                            <p>{{$formulaGerada}}</p>
+                        <div class="row badge-custom bg-pink d-flex align-items-center justify-content-center rounded-05rem">
+                            <span class="text-pink">{{$formulaGerada}}</span>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="card shadow-sm bg-white rounded-15 mt-4">
+                <div class="card-header bg-gradient-blue text-white rounded-top-15 d-flex justify-content-center m-0">
+                        Arquivo XML
+                </div>
                 <div class="card-body">
-                    <div class="col d-flex justify-content-center">
-                        <div class="row">
-                            <p>Arquivo XML</p>
-                        </div>
-                    </div>
                     <form method="post" action="{{URL::to('/submit')}}" enctype="multipart/form-data">
                         <div class="custom-file mb-2">
                             <input type="file" class="custom-file-input" name = "arquivo"  accept=".xml">
@@ -57,29 +53,31 @@
                     </form>
                 </div>
             </div>
-            <div class="container-fluid">
-                <div class="card" style="margin-top: 20px;">
-                    <div class="card-body">
-                        <table class="table table-striped">
-
-                            <tbody>
-                                @foreach($listaFormulas as $formula)
-                              <tr>
-                              <th scope="row">{{$formula['xml']}}</th>
-                                <td>{{$formula['str']}}</td>
-                                <td>
+            <div class="card shadow-sm bg-white rounded-15 mt-4">
+                <div class="card-header bg-gradient-blue text-white rounded-top-15 d-flex justify-content-center m-0">
+                    Fórmulas
+                </div>
+                <div class="p-2">
+                    <table class="table table-bordered">
+                        <tbody>
+                            @foreach($listaFormulas as $formula)
+                            <tr>
+                                <th class="text-center align-middle" scope="row">{{$formula['xml']}}</th>
+                                <td class="text-center align-middle" width="60%">{{$formula['str']}}</td>
+                                <td class="text-center align-middle">
                                     <form method="post" action="{{URL::to('/Arvore')}}">
                                         {{ csrf_field() }}
-                                      <input type="hidden" name='idFormula' value={{$formula['xml']}}>
-                                      <button type="submit" class="btn btn-outline-info">Gerar</button>
+                                        <input type="hidden" name='idFormula' value={{$formula['xml']}}>
+                                        <button type="submit" class="btn btn-sm shadow bg-gradient-green rounded-05rem">
+                                            <span class="text-white">Gerar</span>
+                                            <span class="text-white ml-2"><i class="fas fa-arrow-right text-18"></i></span>
+                                        </button>
                                     </form>
-
-                              </tr>
-                              @endforeach
-
-                            </tbody>
-                          </table>
-                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
