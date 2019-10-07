@@ -5,16 +5,27 @@ body{
 }
 /* -------------------------------------- */
 /* Cores personalizadas */
+/*.text-blue{*/
+/*	color: #3E78F3;*/
+/*}*/
 .text-blue{
-	color: #3E78F3;
+    color: rgb(32,178,170);
 }
+
+/*.bg-gradient-blue{*/
+/*	background: linear-gradient(to left, #23a3f7, #1799f8, #1c8ff8, #2c84f6, #3e78f3);*/
+/*}*/
 
 .bg-gradient-blue{
-	background: linear-gradient(to left, #23a3f7, #1799f8, #1c8ff8, #2c84f6, #3e78f3);
+    background: linear-gradient(to right, rgb(32,178,170),rgb(32,178,170));
 }
 
+
+/*.bg-gradient-green{*/
+/*	background: linear-gradient(to right, #3ef39f, #00ebc6, #00e0e4, #00d3f5, #23c4f7);*/
+/*}*/
 .bg-gradient-green{
-	background: linear-gradient(to right, #3ef39f, #00ebc6, #00e0e4, #00d3f5, #23c4f7);
+   background: linear-gradient(to right, rgb(35, 188, 180), rgb(32,178,170), rgb(32, 170, 162));
 }
 
 .bg-pink{
@@ -24,6 +35,7 @@ body{
 .text-pink{
 	color: #FF00EB;;
 }
+
 
 /* Badge personalizado */
 .badge{

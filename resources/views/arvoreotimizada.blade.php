@@ -1,7 +1,7 @@
 @extends('arvore')
 
 @section('upload')
-<svg width="600" height="600">
+<svg width="800" height="700">
 @for($i = 1 ; $i<count($arv);$i++)
     @if($arv[$i-1]['posY']>=($arv[$i]['posY']))
         @for($e = $i-1 ; $e>0;$e--)
@@ -20,19 +20,25 @@
         <circle cx={{$valor['posX']}} cy={{$valor['posY']-27}} r="3" fill="#AFAFAF"/>
         <text font-size="20" font-weight="bold" fill="rgb(175,175,175)" x={{30}} y={{$valor['posY']+5}}>Linha {{$valor['arv']->getLinhaNo()}}</text>
 
-    <defs>
-        <linearGradient id="grad1" x1="0" y1="80%" x2="80%" y2="50%">
-            <stop offset="0%" style="stop-color:#3ef39f;stop-opacity:0.9" />
-            <stop offset="100%" style="stop-color:#23c4f7;stop-opacity:0.9" />
-        </linearGradient>
-    </defs>
-    <rect x={{$valor['posX']-($valor['tmh']/2)}} y={{$valor['posY']-20}} rx=20 ry=20 width={{$valor['tmh']}} height="40" fill="url(#grad1)" stroke="white" stroke-dasharray="4 1"/>
+        <defs>
+            <linearGradient id="grad1" x1="30%" y1="0%" x2="90%" y2="50%">
+                <stop offset="0%" style="stop-color:rgb(32,178,170);stop-opacity:1" />
+                <stop offset="100%" style="stop-color:rgb(0,128,128);stop-opacity:1" />
+            </linearGradient>
+        </defs>
+{{--    <defs>--}}
+{{--        <linearGradient id="grad1" x1="0" y1="80%" x2="80%" y2="50%">--}}
+{{--            <stop offset="0%" style="stop-color:#3ef39f;stop-opacity:0.9" />--}}
+{{--            <stop offset="100%" style="stop-color:#23c4f7;stop-opacity:0.9" />--}}
+{{--        </linearGradient>--}}
+{{--    </defs>--}}
+  <rect x={{$valor['posX']-($valor['tmh']/2)}} y={{$valor['posY']-20}} rx=20 ry=20 width={{$valor['tmh']}} height="40" fill="url(#grad1)" stroke=#C0C0C0 stroke-width=2 {{--  stroke-dasharray="4 1"--}}/>
     <text text-anchor="middle" font-size="15" font-weight="bold" fill="white"  font-family="Helvetica, sans-serif, Arial" x={{$valor['posX']}} y={{$valor['posY']+5}}>{{$valor['str']}}</text>
     <text font-size="15" font-weight="bold" fill="rgb(175,175,175)" x={{$valor['posX']+($valor['tmh']/2)}} y={{$valor['posY']+25}}>{{$valor['arv']->getLinhaDerivacao()}}</text>
 
 
     @if ($valor['arv']->isUtilizado()==1)
-        {{--<text font-size="15" font-family="Verdana" x={{$valor['posX']+60}} y={{$valor['posY']+5}}>Utilizado</text>--}}
+            <text  font-size="15" font-weight="bold" fill="rgb(175,175,175)" x={{$valor['posX']+($valor['tmh']/2)+5}} y={{$valor['posY']+5}}>Utilizado</text>
     @endif
 
     @if ($valor['arv']->isFechado()==true)

@@ -34,7 +34,8 @@ class Base extends Controller
     #Salva na pasta public o Arquivo XML
    public function SalvarXml(Request $request){
     if ($request->hasFile('arquivo') && $request->file('arquivo')->isValid()){
-        $diretorio = scandir('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas');
+        $dir=dirname(__FILE__,4.).'\storage\app\public\formulas';
+        $diretorio = scandir($dir);
         $num = count($diretorio) - 1;
         $request->file('arquivo')->storeAs('formulas', 'formula-'.$num.'.xml');
         return $this->Index();
@@ -46,7 +47,8 @@ class Base extends Controller
     public function CriarArvoreOtimizada(Request $request){
         # Busca XML no diretorio
         $id = $request->all()['idFormula'];
-        $xml = simplexml_load_file('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas\formula-'.$id.'.xml');
+        $dir=dirname(__FILE__,4.).'\storage\app\public\formulas';
+        $xml = simplexml_load_file($dir.'\formula-'.$id.'.xml');
         #--------
 
         #Cria a arvore passando o XML
@@ -56,8 +58,9 @@ class Base extends Controller
         #--------
 
         #Gera lista das possicoes de cada no da tabela
-        $impresaoAvr = $this->constr->geraListaArvore($arv,600,300,0);
-        #--------
+        $impresaoAvr = $this->constr->geraListaArvore($arv,800,400,0);
+        #--------=>$str, 'posX'=>$posX, 'posY'=>$posYFilho,]
+
 
         #Gera uma string da Formula XML
         $formulaGerada = $this->arg->stringFormula($xml);
@@ -87,7 +90,8 @@ class Base extends Controller
 
         # Busca XML no diretorio
         $idFormula = $formulario['idFormula'];
-        $xml = simplexml_load_file('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas\formula-'.$idFormula.'.xml');
+        $dir=dirname(__FILE__,4.).'\storage\app\public\formulas';
+        $xml = simplexml_load_file($dir.'\formula-'.$idFormula.'.xml');
         #-----
 
         #Cria a arvore passando o XML
@@ -120,7 +124,8 @@ class Base extends Controller
     public function ValidaResposta(Request $request) {
 
         $formulario = $request->all();
-        $xml = simplexml_load_file('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas\formula-'.$formulario['idFormula'].'.xml');
+        $dir=dirname(__FILE__,4.).'\storage\app\public\formulas';
+        $xml = simplexml_load_file($dir.'\formula-'.$formulario['idFormula'].'.xml');
 
         $listaArgumentos = $this->arg->CriaListaArgumentos($xml);
         $arvore = $this->gerador->inicializarDerivacao($listaArgumentos['premissas'],$listaArgumentos['conclusao']);

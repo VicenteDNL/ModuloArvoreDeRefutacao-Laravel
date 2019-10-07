@@ -16,11 +16,12 @@ class Construcao extends Controller
  }
 
     public function stringXmlDiretorio(){
-        $diretorio = scandir('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas');
+     $dir=dirname(__FILE__,4.).'\storage\app\public\formulas';
+        $diretorio = scandir($dir);
         $num = count($diretorio) - 2;
         $listaFormulas=[];
         for($i=1; $i <= $num ; $i++){
-            $xml = simplexml_load_file('C:\xampp\htdocs\ArvoreDeRefutacao\storage\app\public\formulas\formula-'.$i.'.xml');
+            $xml = simplexml_load_file($dir.'\formula-'.$i.'.xml');
             $formula = [
                 'str'=>$this->arg->stringFormula($xml),
                 'xml'=>$i
