@@ -2,7 +2,6 @@
 
 @section('content')
 <!-- Texto -->
-
 <div class="container p-0 mt-3 mb-3">
     <div class="row">
         <div class="col-8">
@@ -54,8 +53,9 @@
                 <div class="card-header bg-gradient-blue text-white rounded-top-15 d-flex justify-content-center negrito m-0">
                     Fórmulas
                 </div>
+                
                 <div class="p-2">
-                    <div class="overflow-auto" style="height: 300px">
+                        <div class="overflow-auto" style="height: 300px" id="container">
                     <table class="table table-bordered">
                         <tbody>
                             @foreach($listaFormulas as $formula)

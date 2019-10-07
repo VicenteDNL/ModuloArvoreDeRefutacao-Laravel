@@ -57,7 +57,7 @@
                                     <th scope="row">{{$formula['xml']}}</th>
                                     <td>{{$formula['str']}}</td>
                                     <td>
-                                        <form method="post" action="{{URL::to('/porEtapa/Inicializado')}}">
+                                        <form method="post" action="{{URL::to('/Inicializado')}}">
                                             {{ csrf_field() }}
                                             <input type="hidden" name='idFormula' value={{$formula['xml']}}>
                                             <button type="submit" class="btn btn-outline-info">Inicializar</button>
@@ -69,10 +69,6 @@
                         </div>
                     </div>
                 </div>
-
-
-
-
             </div>
         </div>
     </div>
