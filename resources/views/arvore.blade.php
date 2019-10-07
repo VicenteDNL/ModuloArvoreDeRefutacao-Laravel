@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-8">
             <div class="card shadow-sm bg-white rounded-15">
-                <div class="card-header bg-gradient-blue text-white rounded-top-15 d-flex justify-content-center m-0">
+                <div class="card-header bg-gradient-blue text-white rounded-top-15 d-flex justify-content-center negrito m-0">
                     Árvore de refutação
                 </div>
                 <div class="card-body d-flex justify-content-center">
@@ -17,7 +17,7 @@
         </div>
         <div class="col-4">
             <div class="card shadow-sm bg-white rounded-15">
-                <div class="card-header bg-gradient-blue text-white rounded-top-15 d-flex justify-content-center m-0">
+                <div class="card-header bg-gradient-blue text-white rounded-top-15 d-flex justify-content-center negrito m-0">
                     Fórmula
                 </div>
                 <div class="card-body">
@@ -29,7 +29,7 @@
                 </div>
             </div>
             <div class="card shadow-sm bg-white rounded-15 mt-4">
-                <div class="card-header bg-gradient-blue text-white rounded-top-15 d-flex justify-content-center m-0">
+                <div class="card-header bg-gradient-blue text-white rounded-top-15 d-flex justify-content-center negrito m-0">
                         Arquivo XML
                 </div>
                 <div class="card-body">
@@ -51,7 +51,7 @@
                 </div>
             </div>
             <div class="card shadow-sm bg-white rounded-15 mt-4">
-                <div class="card-header bg-gradient-blue text-white rounded-top-15 d-flex justify-content-center m-0">
+                <div class="card-header bg-gradient-blue text-white rounded-top-15 d-flex justify-content-center negrito m-0">
                     Fórmulas
                 </div>
                 <div class="p-2">
@@ -60,9 +60,9 @@
                         <tbody>
                             @foreach($listaFormulas as $formula)
                             <tr>
-                                <th class="text-center align-middle" scope="row">{{$formula['xml']}}</th>
+                                <th class="text-center align-middle m-0" scope="row">{{$formula['xml']}}</th>
                                 <td class="text-center align-middle" width="60%">{{$formula['str']}}</td>
-                                <td class="text-center align-middle">
+                                <td class="text-center align-middle m-0 p-0">
                                     <form method="post" action="{{URL::to('/Arvore')}}">
                                         {{ csrf_field() }}
                                         <input type="hidden" name='idFormula' value={{$formula['xml']}}>
@@ -82,7 +82,7 @@
         </div>
     </div>
 </div>
-<div class="footer mt-4 mb-4">
+<div class="footer fixed-bottom mt-4 mb-4">
     <div class="container-fluid">
         <div class="col d-flex justify-content-center">
             <div class="row">

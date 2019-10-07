@@ -26,7 +26,7 @@
                     </div>
                     <!-- Texto -->
                     <div class="col-auto justify-content-start align-self-center">
-                        <h4 class="text-blue">LOGIC LIVE</h4>
+                        <h4 class="text-blue negrito">LOGIC LIVE</h4>
                     </div>
                 </div>
             </div>
