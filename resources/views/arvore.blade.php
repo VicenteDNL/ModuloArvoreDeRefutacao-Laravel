@@ -82,7 +82,7 @@
         </div>
     </div>
 </div>
-<div class="footer fixed-bottom mt-4 mb-4">
+<div class="footer mt-4 mb-4">
     <div class="container-fluid">
         <div class="col d-flex justify-content-center">
             <div class="row">
