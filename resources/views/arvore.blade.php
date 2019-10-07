@@ -2,17 +2,14 @@
 
 @section('content')
 <!-- Texto -->
-<div class="container-fluid mt-3 mb-3">
-    <div class="col-8 d-flex justify-content-center">
-        <div class="row">
-            <span>Árvore de refutação</span>
-        </div>
-    </div>
-</div>
-<div class="container p-0">
+
+<div class="container p-0 mt-3 mb-3">
     <div class="row">
         <div class="col-8">
             <div class="card shadow-sm bg-white rounded-15">
+                <div class="card-header bg-gradient-blue text-white rounded-top-15 d-flex justify-content-center m-0">
+                    Árvore de refutação
+                </div>
                 <div class="card-body d-flex justify-content-center">
                     @yield('upload' ,' Escolha uma formula')
                 </div>
@@ -44,7 +41,7 @@
                         <input type="hidden" value={{csrf_token()}}>
                         <div class="col d-flex justify-content-center mt-2">
                             <div class="row">
-                                <button type="submit" class="btn shadow bg-gradient-blue rounded-05rem">
+                                <button type="submit" class="btn shadow  {{--bg-gradient-blue--}}bg-gradient-green rounded-05rem">
                                     <span class="text-white ml-2"><i class="fas fa-cloud-upload-alt text-18"></i></span>
                                     <span class="text-white ml-2 mr-2">Enviar</span>
                                 </button>
