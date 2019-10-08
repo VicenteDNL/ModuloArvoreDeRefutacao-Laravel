@@ -24,20 +24,20 @@
                 <div class="row ">
                         <div class="col-4">
                     <div class="custom-control custom-radio">
-                        <input type="radio" id="customRadio1" value={{trim($regras[0])}} name="regra" class="custom-control-input" required>
-                        <label class="custom-control-label" for="customRadio1">{{str_replace("_", " da ", $regras[0])}}</label>
+                        <input type="radio" id="customRadio1" value={{trim($regras[0]['id'])}} name="regra" class="custom-control-input" required>
+                        <label class="custom-control-label" for="customRadio1">{{str_replace("_", " da ", $regras[0]['str'])}}</label>
                     </div>
                 </div>
                     <div class="col-4">
                     <div class="custom-control custom-radio">
-                        <input type="radio" id="customRadio2" value={{trim($regras[1])}} name="regra" class="custom-control-input" required>
-                        <label class="custom-control-label" for="customRadio2">{{str_replace("_", " da ", $regras[1])}}</label>
+                        <input type="radio" id="customRadio2" value={{trim($regras[1]['id'])}} name="regra" class="custom-control-input" required>
+                        <label class="custom-control-label" for="customRadio2">{{str_replace("_", " da ", $regras[1]['str'])}}</label>
                     </div>
                 </div>
                     <div class="col-4">
                     <div class="custom-control custom-radio">
-                        <input type="radio" id="customRadio3" value={{trim($regras[2])}} name="regra" class="custom-control-input" required>
-                        <label class="custom-control-label" for="customRadio3">{{str_replace("_", " da ", $regras[2])}}</label>
+                        <input type="radio" id="customRadio3" value={{trim($regras[2]['id'])}} name="regra" class="custom-control-input" required>
+                        <label class="custom-control-label" for="customRadio3">{{str_replace("_", " da ", $regras[2]['str'])}}</label>
                     </div>
                 </div>
                 </div>

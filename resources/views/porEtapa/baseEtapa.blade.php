@@ -35,7 +35,7 @@
                             Arquivo XML
                     </div>
                     <div class="card-body">
-                        <form method="post" action="{{URL::to('/porEtapa/inicializa')}}" enctype="multipart/form-data">
+                        <form method="post" action="{{URL::to('submit')}}" enctype="multipart/form-data">
                             <div class="custom-file mb-2">
                                 <input type="file" class="custom-file-input" name = "arquivo"  accept=".xml" required>
                                 <label class="custom-file-label" for="arquivo">Escolha o arquivo</label>
