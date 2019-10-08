@@ -99,11 +99,11 @@ class Base extends Controller
         $arvore = $this->gerador->inicializarDerivacao($listaArgumentos['premissas'],$listaArgumentos['conclusao']);
         #-----
 
-        $listaDerivacoes=[];
+        $listaDerivacoes="{}";
 
 
         #Gera lista das possicoes de cada no da tabela
-        $impresaoAvr = $this->geraListaArvore($arvore,600,300,0);
+        $impresaoAvr = $this->constr->geraListaArvore($arvore,600,300,0);
         #-----
 
         #Gera uma string da Formula XML
@@ -116,35 +116,59 @@ class Base extends Controller
 
         #Gera array com tres alternativas senda 1 valida e 2 invalidas
         $regras=$this->gerador->arrayPerguntas($arvore);
-        #-----
 
-        return view('porEtapa.arvorePorEtapa',['arv'=>$impresaoAvr,'listaFormulas'=> $listaFormulas, 'formulaGerada'=> $formulaGerada, 'regras'=>$regras, 'listaDerivacoes'=> json_encode ($listaDerivacoes), 'idFormula'=>$idFormula]);
+    
+        #-----
+        $proximoNoInsercao=$this->gerador->proximoNoParaInsercao( $arvore);
+
+        return view('porEtapa.arvorePorEtapa',['arv'=>$impresaoAvr,'listaFormulas'=> $listaFormulas, 'formulaGerada'=> $formulaGerada, 'regras'=>$regras, 'listaDerivacoes'=>$listaDerivacoes, 'idFormula'=>$idFormula, 'proximoNoInsercao'=>$proximoNoInsercao]);
     }
 
     public function ValidaResposta(Request $request) {
 
+        #pega Itens do formulario
         $formulario = $request->all();
+        #-----
+
+        #Inializa a arvore
         $dir=dirname(__FILE__,4.).'\storage\app\public\formulas';
         $xml = simplexml_load_file($dir.'\formula-'.$formulario['idFormula'].'.xml');
-
         $listaArgumentos = $this->arg->CriaListaArgumentos($xml);
         $arvore = $this->gerador->inicializarDerivacao($listaArgumentos['premissas'],$listaArgumentos['conclusao']);
+        #-----
 
-        $valor =$this->gerador->derivar($arvore, $formulario['linha'],$formulario['regra']);
+         #transforma o json em array
+         $listaDerivacoes=$formulario['derivacoes'];
+      
+         $listaDerivacoes=json_decode($listaDerivacoes,true);
+         #-----
 
-        if($valor['sucesso']=false){
-            return ',asdasd';
+        #Reconstroi a arvore
+        $arvorePasso = $this->gerador->gerarArvorePassoPasso($arvore,$listaDerivacoes);
+        #-----
+
+        
+        #Deriva a tentativa atual, caso erro retorna a mensagem
+        $arvoreFinal =$this->gerador->derivar($arvorePasso, $formulario['linha'],$formulario['regra']);
+
+        
+
+        if($arvoreFinal['sucesso']==false){
+            print_r($arvoreFinal['messagem']);
         }
         else{
-
-            $impresaoAvr = $this->geraListaArvore($arvore,600,300,0);
+            $proximoNoInsercao=$this->gerador->proximoNoParaInsercao($arvoreFinal['arv']);
+            $impresaoAvr = $this->constr->geraListaArvore($arvoreFinal['arv'],600,300,0);
             $formulaGerada = $this->arg->stringFormula($xml);
             $listaFormulas=$this->constr->stringXmlDiretorio();
-            $listaDerivacoes=[];
 
-            $regras=$this->gerador->arrayPerguntas($arvore);
+            array_push( $listaDerivacoes, ['linha'=>$formulario['linha'],'regra'=>$formulario['regra']]);
+      
+            $listaDerivacoes =json_encode ($listaDerivacoes);
 
-            return view('porEtapa.arvorePorEtapa',['arv'=>$impresaoAvr,'listaFormulas'=> $listaFormulas, 'formulaGerada'=> $formulaGerada, 'regras'=>$regras, 'listaDerivacoes'=> json_encode ($listaDerivacoes), 'idFormula'=>$formulario['idFormula']]);
+            $regras=$this->gerador->arrayPerguntas($arvoreFinal['arv']);
+
+            return view('porEtapa.arvorePorEtapa',['arv'=>$impresaoAvr,'listaFormulas'=> $listaFormulas, 'formulaGerada'=> $formulaGerada, 'regras'=>$regras, 'listaDerivacoes'=> $listaDerivacoes, 'idFormula'=>$formulario['idFormula'], 'proximoNoInsercao'=>$proximoNoInsercao]);
         }
     }
 

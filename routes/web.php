@@ -15,4 +15,4 @@ Route::get('/porEtapa','Base@PorEtapa');
 
 Route::post('Inicializado', 'Base@Inicializando');
 
-Route::post('porEtapa/Gerando', 'Base@ValidaResposta');
+Route::post('Gerando', 'Base@ValidaResposta');

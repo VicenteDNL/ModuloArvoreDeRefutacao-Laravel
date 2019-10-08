@@ -34,13 +34,13 @@
                 </div>
             </div>
         </div>
-        @if (request()->is("/") or request()->is("Arvore") or request()->is("submit"))
+        {{-- @if (request()->is("/") or request()->is("Arvore") or request()->is("submit"))
         <div class="container mt-3 p-0">
                 <div class="row">
                     <div class="col-8">
                     </div>
                     <div class="col-4">
-                        <button type="submit" class="btn btn-block shadow bg-gradient-green rounded-05rem" onclick="window.location.href='/porEtapa'">
+                        <button type="submit" class="btn btn-block shadow bg-gradient-green rounded-05rem" onclick="window.location.href='porEtapa'">
                             <span class="text-white ml-2"><i class="fas fa-stream text-18"></i></span>
                             <span class="text-white ml-2 mr-2">Por Etapa</span>
                         </button>
@@ -48,20 +48,20 @@
                 </div>
             </div>
         </div>
-        @elseif (request()->is("porEtapa") or (request()->is("Inicializado")))
+        @elseif ( request()->is("porEtapa") or request()->is("Inicializado") or request()->is("Gerando"))
         <div class="container mt-3 p-0">
             <div class="row">
                 <div class="col-8">
                 </div>
                 <div class="col-4">
-                    <button type="submit" class="btn btn-block shadow bg-gradient-green rounded-05rem" onclick="window.location.href='/'">
+                    <button type="submit" class="btn btn-block shadow bg-gradient-green rounded-05rem" onclick="window.location.href='.'">
                         <span class="text-white ml-2"><i class="fas fa-tree text-18"></i></span>
                         <span class="text-white ml-2 mr-2">Árvore Normal</span>
                     </button>
                 </div>
             </div>
         </div>
-        @endif
+        @endif --}}
         <div>
             @yield('content')
         </div>
