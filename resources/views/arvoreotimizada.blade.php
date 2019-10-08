@@ -38,7 +38,9 @@
 
 
     @if ($valor['arv']->isUtilizado()==1)
-            <text  font-size="15" font-weight="bold" fill="rgb(175,175,175)" x={{$valor['posX']+($valor['tmh']/2)+5}} y={{$valor['posY']+5}}>Utilizado</text>
+            <svg x={{$valor['posX']+($valor['tmh']/2)+12}} y={{$valor['posY']+5}} fill=#61CE61>
+                <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"/>
+            </svg>
     @endif
 
     @if ($valor['arv']->isFechado()==true)
