@@ -465,9 +465,6 @@ class Gerador extends Controller
 
             }
             if ($arvore->getFilhoDireitaNo()!=null){
-                print_r('***********');
-                print_r($array);
-                print_r('***********');
 
                 $valor= $this->possibilidades($arvore->getFilhoDireitaNo(),$array);
             }
@@ -480,9 +477,6 @@ class Gerador extends Controller
 
      public function arrayPerguntas($arvore){
          $listapossibilidades = $this->possibilidades($arvore);
-         print_r('-------');
-         print_r($this->possibilidades($arvore));
-         print_r('-------');
          $listaPosValida=[];
 
          $possibilidades =[  'DUPLANAGACAO'=>['id'=>1,'str'=>'Dupla Negação'],
