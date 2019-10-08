@@ -7,7 +7,7 @@
             <div class="col-8">
                 <div class="card shadow-sm bg-white rounded-15">
                     <div class="card-header bg-gradient-blue text-white rounded-top-15 d-flex justify-content-center negrito m-0">
-                        Árvore de refutação
+                        Árvore de refutação / Por Etapa
                     </div>
                     <div class="card-body d-flex justify-content-center">
                         @yield('col-8')
