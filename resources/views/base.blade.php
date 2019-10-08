@@ -13,7 +13,6 @@
         <!-- CSS Customizado -->
         <link rel="stylesheet" type="text/css" href="bootstrap/css/custom.css">
         <link rel="stylesheet" type="text/css" href="fontawesome/css/all.min.css">
-        <link rel="stylesheet" type="text/css" href="perfect-scrollbar/css/perfect-scrollbar.css">
 
     </head>
     <body>
@@ -65,7 +64,15 @@
         <div>
             @yield('content')
         </div>
-
+        <div class="footer mt-4 mb-4">
+            <div class="container-fluid">
+                <div class="col d-flex justify-content-center">
+                    <div class="row">
+                        <span data-toggle="tooltip" data-placement="top" title="Design by 💁🏻‍♂️ Jheymerson">Feito com ❤️ pelo Danilo Saraiva</span>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- JQUERY 3.4.1 -->
         <script type="text/javascript" src="bootstrap/js/jquery.min-3.4.1.js"></script>
         <!-- JS BOOTSTRAP -->
