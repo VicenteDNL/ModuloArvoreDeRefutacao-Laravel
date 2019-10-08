@@ -13,7 +13,7 @@
                         @yield('col-8')
                     </div>   
                 </div>
-                
+                @yield('modal')
                 @yield('alternativas')
       
             </div>

@@ -121,7 +121,7 @@ class Base extends Controller
         #-----
         $proximoNoInsercao=$this->gerador->proximoNoParaInsercao( $arvore);
 
-        return view('porEtapa.arvorePorEtapa',['arv'=>$impresaoAvr,'listaFormulas'=> $listaFormulas, 'formulaGerada'=> $formulaGerada, 'regras'=>$regras, 'listaDerivacoes'=>$listaDerivacoes, 'idFormula'=>$idFormula, 'proximoNoInsercao'=>$proximoNoInsercao]);
+        return view('porEtapa.arvorePorEtapa',['arv'=>$impresaoAvr,'listaFormulas'=> $listaFormulas, 'formulaGerada'=> $formulaGerada, 'regras'=>$regras, 'listaDerivacoes'=>$listaDerivacoes, 'idFormula'=>$idFormula, 'proximoNoInsercao'=>$proximoNoInsercao,'modal'=>['sucesso'=>false,'messagem'=>'']]);
     }
 
     public function ValidaResposta(Request $request) {
@@ -154,22 +154,27 @@ class Base extends Controller
         
 
         if($arvoreFinal['sucesso']==false){
-            print_r($arvoreFinal['messagem']);
+            $modal = ['sucesso'=>true,'messagem'=>$arvoreFinal['messagem']];
+            $proximoNoInsercao=$this->gerador->proximoNoParaInsercao( $arvorePasso);
+            $impresaoAvr = $this->constr->geraListaArvore($arvorePasso,600,300,0);
+            $formulaGerada = $this->arg->stringFormula($xml);
+            $listaFormulas=$this->constr->stringXmlDiretorio();
+            $listaDerivacoes =json_encode ($listaDerivacoes);
+            $regras=$this->gerador->arrayPerguntas( $arvorePasso);
         }
         else{
             $proximoNoInsercao=$this->gerador->proximoNoParaInsercao($arvoreFinal['arv']);
             $impresaoAvr = $this->constr->geraListaArvore($arvoreFinal['arv'],600,300,0);
             $formulaGerada = $this->arg->stringFormula($xml);
             $listaFormulas=$this->constr->stringXmlDiretorio();
-
             array_push( $listaDerivacoes, ['linha'=>$formulario['linha'],'regra'=>$formulario['regra']]);
-      
             $listaDerivacoes =json_encode ($listaDerivacoes);
-
             $regras=$this->gerador->arrayPerguntas($arvoreFinal['arv']);
+            $modal = ['sucesso'=>false,'messagem'=>''];
 
-            return view('porEtapa.arvorePorEtapa',['arv'=>$impresaoAvr,'listaFormulas'=> $listaFormulas, 'formulaGerada'=> $formulaGerada, 'regras'=>$regras, 'listaDerivacoes'=> $listaDerivacoes, 'idFormula'=>$formulario['idFormula'], 'proximoNoInsercao'=>$proximoNoInsercao]);
-        }
+             }
+        return view('porEtapa.arvorePorEtapa',['arv'=>$impresaoAvr,'listaFormulas'=> $listaFormulas, 'formulaGerada'=> $formulaGerada, 'regras'=>$regras, 'listaDerivacoes'=> $listaDerivacoes, 'idFormula'=>$formulario['idFormula'], 'proximoNoInsercao'=>$proximoNoInsercao, 'modal'=>$modal]);
+
     }
 
 
