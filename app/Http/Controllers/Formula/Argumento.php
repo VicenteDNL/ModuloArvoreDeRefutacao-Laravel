@@ -131,7 +131,7 @@ class Argumento extends Controller
         if ($premissa->getName()=="PREMISSA"){
             if($this->childrenIsLpred($premissa)){
                 $premissa_array = $this->lpred($premissa->children());
-                $valor_no = new Predicado ($premissa_array['PREDICATIVO'],$premissa_array['NEG'],'PREMISSA',null,null);
+                $valor_no = new Predicado ($premissa_array['PREDICATIVO'],$premissa_array['NEG'],'PREDICATIVO',null,null);
                 return new Premissa($valor_no->getValorPredicado(), $valor_no);
             }
             else{
@@ -159,7 +159,7 @@ class Argumento extends Controller
         if ($conclusao->getName()=="CONCLUSAO"){
             if($this->childrenIsLpred($conclusao)){
                 $conclusao_array = $this->lpred($conclusao->children());
-                $valor_no = new Predicado($conclusao_array['PREDICATIVO'],$conclusao_array['NEG'],'CONCLUSAO',null,null);
+                $valor_no = new Predicado($conclusao_array['PREDICATIVO'],$conclusao_array['NEG'],'PREDICATIVO',null,null);
                 return new Conclusao($valor_no->getValorPredicado(),"|- ", $valor_no);
             }else{
                 $nome = $conclusao->children()->getName();

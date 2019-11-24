@@ -58,7 +58,7 @@ class Base extends Controller
         #--------
 
         #Gera lista das possicoes de cada no da tabela
-        $impresaoAvr = $this->constr->geraListaArvore($arv,800,400,0);
+        $impresaoAvr = $this->constr->geraListaArvore($arv,700,350,0);
         #--------=>$str, 'posX'=>$posX, 'posY'=>$posYFilho,]
 
 
@@ -102,15 +102,15 @@ class Base extends Controller
         $listaDerivacoes="{}";
 
 
-        #Gera lista das possicoes de cada no da tabela
-        $impresaoAvr = $this->constr->geraListaArvore($arvore,600,300,0);
+        #Gera lista das possicoes de cada no da arvore
+        $impresaoAvr = $this->constr->geraListaArvore($arvore,700,350,0);
         #-----
 
         #Gera uma string da Formula XML
         $formulaGerada = $this->arg->stringFormula($xml);
         #-----
 
-        #Gera lista das arvores para exibir na tabela
+        #Gera lista das formulas para exibir na tabela
         $listaFormulas=$this->constr->stringXmlDiretorio();
         #-----
 
@@ -120,6 +120,7 @@ class Base extends Controller
     
         #-----
         $proximoNoInsercao=$this->gerador->proximoNoParaInsercao( $arvore);
+       
 
         return view('porEtapa.arvorePorEtapa',['arv'=>$impresaoAvr,'listaFormulas'=> $listaFormulas, 'formulaGerada'=> $formulaGerada, 'regras'=>$regras, 'listaDerivacoes'=>$listaDerivacoes, 'idFormula'=>$idFormula, 'proximoNoInsercao'=>$proximoNoInsercao,'modal'=>['sucesso'=>false,'messagem'=>'']]);
     }
@@ -155,8 +156,9 @@ class Base extends Controller
 
         if($arvoreFinal['sucesso']==false){
             $modal = ['sucesso'=>true,'messagem'=>$arvoreFinal['messagem']];
+
             $proximoNoInsercao=$this->gerador->proximoNoParaInsercao( $arvorePasso);
-            $impresaoAvr = $this->constr->geraListaArvore($arvorePasso,600,300,0);
+            $impresaoAvr = $this->constr->geraListaArvore($arvorePasso,700,350,0);
             $formulaGerada = $this->arg->stringFormula($xml);
             $listaFormulas=$this->constr->stringXmlDiretorio();
             $listaDerivacoes =json_encode ($listaDerivacoes);
@@ -164,9 +166,12 @@ class Base extends Controller
         }
         else{
             $proximoNoInsercao=$this->gerador->proximoNoParaInsercao($arvoreFinal['arv']);
-            $impresaoAvr = $this->constr->geraListaArvore($arvoreFinal['arv'],600,300,0);
+            $impresaoAvr = $this->constr->geraListaArvore($arvoreFinal['arv'],700,350,0);
+
             $formulaGerada = $this->arg->stringFormula($xml);
+
             $listaFormulas=$this->constr->stringXmlDiretorio();
+
             array_push( $listaDerivacoes, ['linha'=>$formulario['linha'],'regra'=>$formulario['regra']]);
             $listaDerivacoes =json_encode ($listaDerivacoes);
             $regras=$this->gerador->arrayPerguntas($arvoreFinal['arv']);

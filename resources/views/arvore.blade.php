@@ -7,10 +7,11 @@
         <div class="col-8">
             <div class="card shadow-sm bg-white rounded-15">
                 <div class="card-header bg-gradient-blue text-white rounded-top-15 d-flex justify-content-center negrito m-0">
-                    Árvore de refutação
+                    Árvore de refutação / Otimizada
                 </div>
-                <div class="card-body d-flex justify-content-center">
-                    @yield('upload' ,' Escolha uma formula')
+                <div class="card-body d-flex justify-content-center ">
+                    <div class="overflow-auto"> @yield('upload' ,' Escolha uma formula')</div>
+                   
                 </div>
             </div>
         </div>
@@ -25,28 +26,6 @@
                             <span class="text-pink">{{$formulaGerada}}</span>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="card shadow-sm bg-white rounded-15 mt-4">
-                <div class="card-header bg-gradient-blue text-white rounded-top-15 d-flex justify-content-center negrito m-0">
-                        Arquivo XML
-                </div>
-                <div class="card-body">
-                    <form method="post" action="{{URL::to('/submit')}}" enctype="multipart/form-data">
-                        <div class="custom-file mb-2">
-                            <input type="file" class="custom-file-input" name = "arquivo"  accept=".xml" required>
-                            <label class="custom-file-label" for="arquivo">Escolha o arquivo</label>
-                        </div>
-                        <input type="hidden" value={{csrf_token()}}>
-                        <div class="col d-flex justify-content-center mt-2">
-                            <div class="row">
-                                <button type="submit" class="btn shadow  {{--bg-gradient-blue--}}bg-gradient-green rounded-05rem">
-                                    <span class="text-white ml-2"><i class="fas fa-cloud-upload-alt text-18"></i></span>
-                                    <span class="text-white ml-2 mr-2">Enviar</span>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
                 </div>
             </div>
             <div class="card shadow-sm bg-white rounded-15 mt-4">
@@ -77,6 +56,30 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+
+
+            <div class="card shadow-sm bg-white rounded-15 mt-4">
+                <div class="card-header bg-gradient-blue text-white rounded-top-15 d-flex justify-content-center negrito m-0">
+                        Arquivo XML
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{{URL::to('/submit')}}" enctype="multipart/form-data">
+                        <div class="custom-file mb-2">
+                            <input type="file" class="custom-file-input" name = "arquivo"  accept=".xml" required>
+                            <label class="custom-file-label" for="arquivo">Escolha o arquivo</label>
+                        </div>
+                        <input type="hidden" value={{csrf_token()}}>
+                        <div class="col d-flex justify-content-center mt-2">
+                            <div class="row">
+                                <button type="submit" class="btn shadow  {{--bg-gradient-blue--}}bg-gradient-green rounded-05rem">
+                                    <span class="text-white ml-2"><i class="fas fa-cloud-upload-alt text-18"></i></span>
+                                    <span class="text-white ml-2 mr-2">Enviar</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 @extends('arvore')
 
 @section('upload')
-<svg width="800" height="700">
+<svg width="700" height="660">
 @for($i = 1 ; $i<count($arv);$i++)
     @if($arv[$i-1]['posY']>=($arv[$i]['posY']))
         @for($e = $i-1 ; $e>0;$e--)
@@ -38,7 +38,7 @@
 
 
     @if ($valor['arv']->isUtilizado()==1)
-            <svg x={{$valor['posX']+($valor['tmh']/2)+12}} y={{$valor['posY']+5}} fill=#61CE61>
+            <svg x={{$valor['posX']+($valor['tmh']/2)+12}} y={{$valor['posY']-10}} fill=#61CE61>
                 <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"/>
             </svg>
     @endif

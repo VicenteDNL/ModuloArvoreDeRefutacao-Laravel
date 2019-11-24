@@ -27,30 +27,19 @@ class Gerador extends Controller
     /*Recebe o numero da linha  e a arvore e retorna todos os nos que estão no mesma linha*/
     public function getNoslinha($arvore,$linha, $nos=[]){
           //corrigir retorno mais de um elemento
-        $nose=[];
+         
         if ($arvore->getLinhaNo()==$linha){
-            
-            $nos[] =$arvore;
+            array_push($nos,$arvore);
+            }
 
-            }
-        else{
-            if($arvore->getFilhoEsquerdaNo()!=null){
-                $nose= $this->getNoslinha($arvore->getFilhoEsquerdaNo(),$linha, $nose);
-            }
-            if($arvore->getFilhoCentroNo()!=null){
-                $nose= $this->getNoslinha($arvore->getFilhoCentroNo(),$linha, $nose);
-            }
-            if($arvore->getFilhoDireitaNo()!=null){
-                
-                $nose= $this->getNoslinha($arvore->getFilhoDireitaNo(),$linha, $nose);
-                
-            }
-            return $nose;
+        if($arvore->getFilhoCentroNo()!=null){ 
+            $nos= $this->getNoslinha($arvore->getFilhoCentroNo(),$linha,$nos);
         }
-
+        elseif($arvore->getFilhoEsquerdaNo()!=null and $arvore->getFilhoDireitaNo()!=null){
+            $nos= $this->getNoslinha($arvore->getFilhoEsquerdaNo(),$linha, $nos);   
+            $nos= $this->getNoslinha($arvore->getFilhoDireitaNo(),$linha, $nos);
+        }
         return $nos;
-
-
     }
 
      /* Esta função gera e retorna as primeiras linhas da arvores de refutacao, a partir das premissas e conclusão */
@@ -161,15 +150,19 @@ class Gerador extends Controller
      um No folha apto para ser o proximo a ser inserido, caso nao encontre returna NULL*/
      public function  proximoNoParaInsercao($arvore, $descendenteSemDerivacao = false){
          $proximoNo =null;
+
+         
          if ( $arvore->isUtilizado()==false and ( (in_array($arvore->getValorNo()->getTipoPredicado(), ['DISJUNCAO','CONDICIONAL','BICONDICIONAL','CONJUNCAO'])) or ( $arvore->getValorNo()->getTipoPredicado()=='PREDICATIVO' and $arvore->getValorNo()->getNegadoPredicado()>=2) )){
-             $descendenteSemDerivacao = true;
+            $descendenteSemDerivacao = true;
          }
+
          if ($arvore->getFilhoDireitaNo() ==null and  $arvore->getFilhoEsquerdaNo() ==null and  $arvore->getFilhoCentroNo() ==null  and $arvore->isFechado()==false and  $descendenteSemDerivacao==true){
-             return $arvore;
+            return $arvore;
          }
          else {
              if ($arvore->getFilhoCentroNo()!=null and $proximoNo ==null){
-                 $proximoNo = $this->proximoNoParaInsercao($arvore->getFilhoCentroNo(),$descendenteSemDerivacao);
+
+                 $proximoNo = $this->proximoNoParaInsercao($arvore->getFilhoCentroNo(),$descendenteSemDerivacao); 
              }
              if ($arvore->getFilhoEsquerdaNo()!=null and $proximoNo ==null){
                  $proximoNo = $this->proximoNoParaInsercao($arvore->getFilhoEsquerdaNo(),$descendenteSemDerivacao);
@@ -257,6 +250,8 @@ class Gerador extends Controller
      /*esta função recebe a referencia do No que vai sofrer inserção, a arvore atual, e o array dos nos resultantes da aplicacao da regra de derivacao e faz a verificação da contradicao do novo no*/
      public function criarNoBifurcado($noInsercao,$arvore,$array_filhos,$linhaDerivado){
 
+   
+        
         $noInsercao->setFilhoEsquerdaNo(new No($array_filhos['esquerda'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,$linhaDerivado,false,false));
 
         $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoEsquerdaNo());
@@ -274,29 +269,38 @@ class Gerador extends Controller
      /*esta função recebe a referencia do No que vai sofrer inserção, a arvore atual, e o array dos nos resultantes da aplicacao da regra de derivacao e faz a verificação da contradicao do novo no*/
      public function criarNoBifurcadoDuplo($noInsercao,$arvore,$array_filhos,$linhaDerivado){
 
+        
+        
         $noInsercao->setFilhoEsquerdaNo(new No($array_filhos['esquerda'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,$linhaDerivado,false,false));
-        $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoEsquerdaNo());
-        if($contradicao!=false){
-            $noInsercao->getFilhoEsquerdaNo()->FecharRamo($contradicao->getLinhaNo());
-        }
+        $contradEsq1 = $this->encontraContradicao($arvore,$noInsercao->getFilhoEsquerdaNo());
+  
 
         $noInsercao->getFilhoEsquerdaNo()->setFilhoCentroNo(new No($array_filhos['esquerda'][1],null,null,null,$noInsercao->getLinhaNo()+2,null,$linhaDerivado,false,false));
-        $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoEsquerdaNo()->getFilhoCentroNo());
-        if($contradicao!=false){
-            $noInsercao->getFilhoEsquerdaNo()->getFilhoCentroNo()->FecharRamo($contradicao->getLinhaNo());
+        $contradEsq2 = $this->encontraContradicao($arvore,$noInsercao->getFilhoEsquerdaNo()->getFilhoCentroNo());
+        if($contradEsq2!=false){
+            $noInsercao->getFilhoEsquerdaNo()->getFilhoCentroNo()->FecharRamo($contradEsq2->getLinhaNo());
         }
+        elseif($contradEsq1!=false and $contradEsq2==false){
+            $noInsercao->setFilhoEsquerdaNo(new No($array_filhos['esquerda'][1],null,null,null,$noInsercao->getLinhaNo()+1,null,$linhaDerivado,false,false));
+            $noInsercao->getFilhoEsquerdaNo()->setFilhoCentroNo(new No($array_filhos['esquerda'][0],null,null,null,$noInsercao->getLinhaNo()+2,null,$linhaDerivado,false,false));
+            $noInsercao->getFilhoEsquerdaNo()->getFilhoCentroNo()->FecharRamo($contradEsq1->getLinhaNo());
+        }
+
 
 
         $noInsercao->setFilhoDireitaNo(new No($array_filhos['direita'][0],null,null,null,$noInsercao->getLinhaNo()+1,null,$linhaDerivado,false,false));
-        $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoDireitaNo());
-        if($contradicao!=false){
-            $noInsercao->getFilhoDireitaNo()->FecharRamo($contradicao->getLinhaNo());
-        }
+        $contradDir1 = $this->encontraContradicao($arvore,$noInsercao->getFilhoDireitaNo());
+ 
 
         $noInsercao->getFilhoDireitaNo()->setFilhoCentroNo(new No($array_filhos['direita'][1],null,null,null,$noInsercao->getLinhaNo()+2,null,$linhaDerivado,false,false));
-        $contradicao = $this->encontraContradicao($arvore,$noInsercao->getFilhoDireitaNo()->getFilhoCentroNo());
-        if($contradicao!=false){
-            $noInsercao->getFilhoDireitaNo()->getFilhoCentroNo()->FecharRamo($contradicao->getLinhaNo());
+        $contradDir2 = $this->encontraContradicao($arvore,$noInsercao->getFilhoDireitaNo()->getFilhoCentroNo());
+        if($contradDir2!=false){
+            $noInsercao->getFilhoDireitaNo()->getFilhoCentroNo()->FecharRamo($contradDir2->getLinhaNo());
+        }
+        elseif($contradDir1!=false and $contradDir2==false){
+            $noInsercao->setFilhoDireitaNo(new No($array_filhos['direita'][1],null,null,null,$noInsercao->getLinhaNo()+1,null,$linhaDerivado,false,false));
+            $noInsercao->getFilhoDireitaNo()->setFilhoCentroNo(new No($array_filhos['direita'][0],null,null,null,$noInsercao->getLinhaNo()+2,null,$linhaDerivado,false,false));
+            $noInsercao->getFilhoDireitaNo()->getFilhoCentroNo()->FecharRamo($contradDir1->getLinhaNo());
         }
      }
 
@@ -420,58 +424,80 @@ class Gerador extends Controller
         }
      }
 
+     public function existePossibilidade($array, $id){
+         foreach($array as $valor){
+             if( $valor['id']==$id){
+                 return true;
+             }
+         }
+         return false;
+     }
 
      public function possibilidades($arvore,$array=[]){
+        
 
         if ($arvore->getValorNo()->getNegadoPredicado()>=2 and $arvore->isUtilizado()==false){
-
-            array_push($array, ['id'=>1,'str'=>'DUPLANAGACAO']);
+            if ($this->existePossibilidade($array,1)==false){
+                array_push($array, ['id'=>1,'str'=>'DUPLANAGACAO']);
+            } 
         }
         elseif($arvore->getValorNo()->getTipoPredicado()=='CONJUNCAO' and $arvore->getValorNo()->getNegadoPredicado()==0 and $arvore->isUtilizado()==false){
-            array_push($array, ['id'=>2,'str'=>'CONJUNCAO']);
+            if ($this->existePossibilidade($array,2)==false){
+                array_push($array, ['id'=>2,'str'=>'CONJUNCAO']);
+            }
         }
         elseif ($arvore->getValorNo()->getTipoPredicado()== 'DISJUNCAO' and $arvore->getValorNo()->getNegadoPredicado()==1 and $arvore->isUtilizado()==false){
-            array_push($array, ['id'=>3,'str'=>'DISJUNCAONEGADA']);
+            if ($this->existePossibilidade($array,3)==false){
+                array_push($array, ['id'=>3,'str'=>'DISJUNCAONEGADA']);
+            }
         }
         elseif ($arvore->getValorNo()->getTipoPredicado()== 'CONDICIONAL' and $arvore->getValorNo()->getNegadoPredicado()==1 and $arvore->isUtilizado()==false) {
-            array_push($array, ['id'=>4,'str'=>'CONDICIONALNEGADA']);
+            if ($this->existePossibilidade($array,4)==false){
+                array_push($array, ['id'=>4,'str'=>'CONDICIONALNEGADA']);
+            }
         }
         elseif($arvore->getValorNo()->getTipoPredicado()=='DISJUNCAO' and $arvore->getValorNo()->getNegadoPredicado()==0 and $arvore->isUtilizado()==false){
-            array_push($array, ['id'=>5,'str'=>'DISJUNCAO']);
+            if ($this->existePossibilidade($array,5)==false){
+                array_push($array, ['id'=>5,'str'=>'DISJUNCAO']);
             }
+        }
         elseif ($arvore->getValorNo()->getTipoPredicado()== 'CONDICIONAL' and $arvore->getValorNo()->getNegadoPredicado()==0 and $arvore->isUtilizado()==false){
-            array_push($array, ['id'=>6,'str'=>'CONDICIONAL']);
+            if ($this->existePossibilidade($array,6)==false){
+                array_push($array, ['id'=>6,'str'=>'CONDICIONAL']);
             }
+        }
         elseif ($arvore->getValorNo()->getTipoPredicado()== 'BICONDICIONAL' and $arvore->getValorNo()->getNegadoPredicado()==0 and $arvore->isUtilizado()==false){
-            array_push($array, ['id'=>7,'str'=>'BICONDICIONAL']);
+            if ($this->existePossibilidade($array,7)==false){
+                array_push($array, ['id'=>7,'str'=>'BICONDICIONAL']);
+            }
         }
         elseif ($arvore->getValorNo()->getTipoPredicado()== 'CONJUNCAO' and $arvore->getValorNo()->getNegadoPredicado()==1 and $arvore->isUtilizado()==false){
-            array_push($array, ['id'=>8,'str'=>'CONJUNCAONEGADA']);
+            if ($this->existePossibilidade($array,8)==false){
+                array_push($array, ['id'=>8,'str'=>'CONJUNCAONEGADA']);
             }
+        }
         elseif ($arvore->getValorNo()->getTipoPredicado()== 'BICONDICIONAL' and $arvore->getValorNo()->getNegadoPredicado()==1 and $arvore->isUtilizado()==false){
-            array_push($array, ['id'=>8,'str'=>'BICONDICIONALNEGADA']);
-
+            if ($this->existePossibilidade($array,9)==false){
+                array_push($array, ['id'=>9,'str'=>'BICONDICIONALNEGADA']);
             }
+        }
+
+   
+        if ($arvore->getFilhoCentroNo()!=null ){
+            
+            $array=$this->possibilidades($arvore->getFilhoCentroNo(),$array);
+
+        }
+        elseif($arvore->getFilhoEsquerdaNo()!=null and $arvore->getFilhoDireitaNo()!=null){
+
+            $array=$this->possibilidades($arvore->getFilhoEsquerdaNo(),$array);
+            
+        
+            $array=$this->possibilidades($arvore->getFilhoDireitaNo(),$array);
 
 
-
-            $valor=$array;
-            if ($arvore->getFilhoCentroNo()!=null ){
-                $valor=$this->possibilidades($arvore->getFilhoCentroNo(),$array);
-            }
-            if ($arvore->getFilhoEsquerdaNo()!=null ){
-
-                $valor=$this->possibilidades($arvore->getFilhoEsquerdaNo(),$array);
-
-            }
-            if ($arvore->getFilhoDireitaNo()!=null){
-
-                $valor= $this->possibilidades($arvore->getFilhoDireitaNo(),$array);
-            }
-
-         return $valor;
-
-
+        }
+        return  $array;
 
     }
 
@@ -487,11 +513,12 @@ class Gerador extends Controller
              'CONDICIONAL'=>['id'=>6,'str'=>'Condicional'],
              'BICONDICIONAL'=>['id'=>7,'str'=>'Bicondicional'],
              'CONJUNCAONEGADA'=>['id'=>8,'str'=>'Negação da Conjunção'],
-             'BICONDICIONALNEGADA'=>['id'=>8,'str'=>'Negação da Bicondicional']
+             'BICONDICIONALNEGADA'=>['id'=>9,'str'=>'Negação da Bicondicional']
          ];
 
          foreach ( $listapossibilidades as $pos){
-             array_push($listaPosValida,$possibilidades[$pos['str']]);
+                array_push($listaPosValida,$possibilidades[$pos['str']]);
+             
          };
 
         if (count( $listaPosValida)<3){
@@ -513,21 +540,26 @@ class Gerador extends Controller
         }
 
         shuffle($listaPosValida);
+    
         return $listaPosValida;
      }
 
      public function derivar($arvore, $linha,$regra){
         $noInsercao = $this->proximoNoParaInsercao($arvore);
 
+        
         $no =[];
-      
         $listaNos=$this->getNoslinha($arvore, (int)$linha);
         foreach($listaNos as $noValido){
             $noDescendente =$this->isDecendente($noValido,$noInsercao);
             if($noDescendente!=false){
-                $no=$noValido;
+                if($noValido->isUtilizado()==false){
+                    $no=$noValido;
+                }
+               
             }
         }
+        
         if($no==null){
             return ['sucesso'=>false, 'messagem'=>'Linha não Existe'];
         }

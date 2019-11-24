@@ -46,14 +46,15 @@
             <input type="hidden"  name="derivacoes" value={{$listaDerivacoes}} class="form-control">
             
             <div class="row text-center">
-                    
+              
+
                 <div class="col-9">
                         <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Linha</span>
-                                </div>
-                                <input type="number" name="linha"  class="form-control" required>
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Linha</span>
                             </div>
+                            <input type="number" name="linha"  class="form-control" required>
+                        </div>
                             
                 <div class="row ">
                         <div class="col-4">
@@ -61,22 +62,22 @@
                         <input type="radio" id="customRadio1" value={{trim($regras[0]['id'])}} name="regra" class="custom-control-input" required>
                         <label class="custom-control-label" for="customRadio1">{{str_replace("_", " da ", $regras[0]['str'])}}</label>
                     </div>
-                </div>
-                    <div class="col-4">
-                    <div class="custom-control custom-radio">
-                        <input type="radio" id="customRadio2" value={{trim($regras[1]['id'])}} name="regra" class="custom-control-input" required>
-                        <label class="custom-control-label" for="customRadio2">{{str_replace("_", " da ", $regras[1]['str'])}}</label>
                     </div>
-                </div>
-                    <div class="col-4">
-                    <div class="custom-control custom-radio">
-                        <input type="radio" id="customRadio3" value={{trim($regras[2]['id'])}} name="regra" class="custom-control-input" required>
-                        <label class="custom-control-label" for="customRadio3">{{str_replace("_", " da ", $regras[2]['str'])}}</label>
+                        <div class="col-4">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="customRadio2" value={{trim($regras[1]['id'])}} name="regra" class="custom-control-input" required>
+                            <label class="custom-control-label" for="customRadio2">{{str_replace("_", " da ", $regras[1]['str'])}}</label>
+                        </div>
                     </div>
-                </div>
+                        <div class="col-4">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="customRadio3" value={{trim($regras[2]['id'])}} name="regra" class="custom-control-input" required>
+                            <label class="custom-control-label" for="customRadio3">{{str_replace("_", " da ", $regras[2]['str'])}}</label>
+                        </div>
+                    </div>
                 </div>
             </div>
-                <div class="col-3 ">
+                <div class="col-3 d-flex align-items-center">
                     <div>
                         <button type="submit" class="btn shadow btn-lg   {{--bg-gradient-blue--}}bg-gradient-green rounded-05rem ">
                                 <span class="text-white text-center ml-2"><i class="fas fa-play text-18"></i></span>
@@ -97,7 +98,7 @@
 
 
 @section('col-8')
-<svg width="600" height="600">
+<svg width="700" height="600">
         @for($i = 1 ; $i<count($arv);$i++)
         @if($arv[$i-1]['posY']>=($arv[$i]['posY']))
             @for($e = $i-1 ; $e>0;$e--)
@@ -143,7 +144,9 @@
 
 
     @if ($valor['arv']->isUtilizado()==true)
-        <text  font-size="15" font-weight="bold" fill="rgb(175,175,175)" x={{$valor['posX']+($valor['tmh']/2)+5}} y={{$valor['posY']+5}}>Utilizado</text>
+            <svg x={{$valor['posX']+($valor['tmh']/2)+12}} y={{$valor['posY']-10}} fill=#61CE61>
+                <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"/>
+            </svg>
     @endif
 
     @if ($valor['arv']->isFechado()==true)

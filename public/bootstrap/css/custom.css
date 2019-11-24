@@ -30,6 +30,10 @@ body{
    background: radial-gradient(  rgb(32, 140, 132),rgb(32, 127, 119));
 }
 
+.bg-purple {
+    background: #464982;
+}
+
 .bg-pink{
 	background: rgb(255, 0, 230,0.1) !important;
 }
