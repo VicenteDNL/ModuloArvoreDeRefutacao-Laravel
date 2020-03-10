@@ -120,6 +120,7 @@ class Base extends Controller
     
         #-----
         $proximoNoInsercao=$this->gerador->proximoNoParaInsercao( $arvore);
+  
        
 
         return view('porEtapa.arvorePorEtapa',['arv'=>$impresaoAvr,'listaFormulas'=> $listaFormulas, 'formulaGerada'=> $formulaGerada, 'regras'=>$regras, 'listaDerivacoes'=>$listaDerivacoes, 'idFormula'=>$idFormula, 'proximoNoInsercao'=>$proximoNoInsercao,'modal'=>['sucesso'=>false,'messagem'=>'']]);
@@ -155,7 +156,9 @@ class Base extends Controller
         
 
         if($arvoreFinal['sucesso']==false){
-            $modal = ['sucesso'=>true,'messagem'=>$arvoreFinal['messagem']];
+
+
+            $modal = ['sucesso'=>true,'messagem'=>"Linha:".$formulario['linha']." - ".$arvoreFinal['messagem']];
 
             $proximoNoInsercao=$this->gerador->proximoNoParaInsercao( $arvorePasso);
             $impresaoAvr = $this->constr->geraListaArvore($arvorePasso,700,350,0);
@@ -177,6 +180,9 @@ class Base extends Controller
             $regras=$this->gerador->arrayPerguntas($arvoreFinal['arv']);
             $modal = ['sucesso'=>false,'messagem'=>''];
 
+            
+    
+            
              }
         return view('porEtapa.arvorePorEtapa',['arv'=>$impresaoAvr,'listaFormulas'=> $listaFormulas, 'formulaGerada'=> $formulaGerada, 'regras'=>$regras, 'listaDerivacoes'=> $listaDerivacoes, 'idFormula'=>$formulario['idFormula'], 'proximoNoInsercao'=>$proximoNoInsercao, 'modal'=>$modal]);
 

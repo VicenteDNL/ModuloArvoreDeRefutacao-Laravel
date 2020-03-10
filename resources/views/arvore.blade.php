@@ -10,7 +10,7 @@
                     Árvore de refutação / Otimizada
                 </div>
                 <div class="card-body d-flex justify-content-center ">
-                    <div class="overflow-auto"> @yield('upload' ,' Escolha uma formula')</div>
+                    <div class="overflow-auto"> @yield('upload' ,' Escolha uma fórmula')</div>
                    
                 </div>
             </div>

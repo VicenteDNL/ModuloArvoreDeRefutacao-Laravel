@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>🎓 The Logic Live - Árvore de refutação</title>
+        <title>Logic Live - Árvore de refutação</title>
+        <link rel="shortcut icon"  href="imagens/logo.png">
 
         <!-- CSS BOOTSTRAP -->
         <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
@@ -72,7 +73,7 @@
             <div class="container-fluid">
                 <div class="col d-flex justify-content-center">
                     <div class="row">
-                        <span data-toggle="tooltip" data-placement="top" title="Design by 💁🏻‍♂️ Jheymerson">Feito com ❤️ pelo Danilo Saraiva</span>
+                        <span data-toggle="tooltip" data-placement="top">Feito por @DaniloSaraiva</span>
                     </div>
                 </div>
             </div>

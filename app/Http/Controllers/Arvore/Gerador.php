@@ -146,9 +146,33 @@ class Gerador extends Controller
          }
      }
 
-     /*esta funçao recebe com parametro a arvore atual, e um boleano (indica se entre os seus descentende foi encontrado um No que ainda nao foi derivado), percorrendo da centro -esquerda-direita- para ate encontras
+     /*esta funçao recebe com parametro a arvore atual, e retorna uma array com a referencia de todos os nós folhas*/
+     public function getNosFolha($arvore, $ListaDeNo=null){
+
+        
+        if ($arvore->getFilhoDireitaNo() ==null and  $arvore->getFilhoEsquerdaNo() ==null and  $arvore->getFilhoCentroNo() ==null  and $arvore->isFechado()==false){
+            $ListaDeNo[] =  $arvore;
+            return  $ListaDeNo;
+        }
+        else {
+            if ($arvore->getFilhoCentroNo()!=null){
+
+                $ListaDeNo = $this->getNosFolha($arvore->getFilhoCentroNo(),$ListaDeNo); 
+            }
+            if ($arvore->getFilhoEsquerdaNo()!=null){
+                $ListaDeNo = $this->getNosFolha($arvore->getFilhoEsquerdaNo(),$ListaDeNo);
+            }
+            if ($arvore->getFilhoDireitaNo()!=null ){
+                $ListaDeNo = $this->getNosFolha($arvore->getFilhoDireitaNo(),$ListaDeNo);
+            }
+            return $ListaDeNo;
+        }
+    }
+
+        /*esta funçao recebe com parametro a arvore atual, e um boleano (indica se entre os seus descentende foi encontrado um No que ainda nao foi derivado), percorrendo da centro -esquerda-direita- para ate encontras
      um No folha apto para ser o proximo a ser inserido, caso nao encontre returna NULL*/
-     public function  proximoNoParaInsercao($arvore, $descendenteSemDerivacao = false){
+        public function  proximoNoParaInsercao($arvore, $descendenteSemDerivacao = false){
+
          $proximoNo =null;
 
          
@@ -177,10 +201,11 @@ class Gerador extends Controller
      /*esta funcao recebe uma arvore (a partir de um NO qualquer), e o No de interese, afim de verificar se o no raiz da arvore é parente do no de interesse, e retorna true se a condicao for vedadeira e false se nao for
      verdadeira*/
      public function isDecendente($arvore,$no){
+
+        
          $noDescendente=false;
 
-        if ($arvore->getValorNo()->getValorPredicado() == $no->getValorNo()->getValorPredicado() and $arvore->getValorNo()->getNegadoPredicado() == $no->getValorNo()->getNegadoPredicado()){
-
+        if ($arvore->getValorNo()=== $no->getValorNo()){
             return true;
         }
         else {
@@ -544,11 +569,22 @@ class Gerador extends Controller
         return $listaPosValida;
      }
 
-     public function derivar($arvore, $linha,$regra){
-        $noInsercao = $this->proximoNoParaInsercao($arvore);
 
+    // Esta função tem a finalidade validar e derivar a tentativa do usuario, para isso ela recebe a arvore a linha e regra do nó que deseja derivar  
+     public function derivar($arvore, $linha,$regra){
         
-        $no =[];
+        
+    
+        #responsavel por descobrir qual o proximo do marcado para inserção, se retornar null significa que não existe mais derivações possiveis
+        $noInsercao = $this->proximoNoParaInsercao($arvore);        
+        if($noInsercao==null){
+            return ['sucesso'=>false, 'messagem'=>'não existe mais derivações possiveis'];
+        }
+        #----------------------
+
+
+        #Responsavel em descobirir qual No escolhido, levando em consideração ao noFolha ativo para inserção, visto de em uma mesma linha pode ter mais de um NO
+        $no =null;
         $listaNos=$this->getNoslinha($arvore, (int)$linha);
         foreach($listaNos as $noValido){
             $noDescendente =$this->isDecendente($noValido,$noInsercao);
@@ -556,74 +592,118 @@ class Gerador extends Controller
                 if($noValido->isUtilizado()==false){
                     $no=$noValido;
                 }
+                else{
+                    return ['sucesso'=>false, 'messagem'=>'Este argumento já foi derivado'];
+                }
                
             }
         }
-        
+        #---------------------
+
+       
         if($no==null){
-            return ['sucesso'=>false, 'messagem'=>'Linha não Existe'];
+            return ['sucesso'=>false, 'messagem'=>'Linha não existe'];
         }
         else{
+
+            #Analise sê o no a ser derivado possui mais de um nóFolha valido para inserção
+            $ListanosFolha = $this->getNosFolha($arvore);
+            for ($i=0 ; $i<count($ListanosFolha) ; $i++){
+                if (!$this->isDecendente($no,$ListanosFolha[$i])){
+                    unset($ListanosFolha[$i]);
+                }  
+            }
+            #---------------------
+
+
     
-            if(($no->getValorNo()->getTipoPredicado()=='PREMISSA' OR $no->getValorNo()->getTipoPredicado()=='CONCLUSAO' OR $no->getValorNo()->getTipoPredicado()=='PREDICATIVO') and $no->getValorNo()->getNegadoPredicado()<2){
-               var_dump($no->getValorNo()->getTipoPredicado()=='PREMISSA');
-                return ['sucesso'=>false, 'messagem'=>'Linha Invalida'];
+            if(($no->getValorNo()->getTipoPredicado()=='PREMISSA' OR $no->getValorNo()->getTipoPredicado()=='CONCLUSAO' OR $no->getValorNo()->getTipoPredicado()=='PREDICATIVO')and $no->getValorNo()->getNegadoPredicado()<2){
+               
+                    return ['sucesso'=>false, 'messagem'=>'Não existe derivação para este argumento'];
+        
+    
             }
             elseif($no->getValorNo()->getNegadoPredicado()>=2  and $regra==1){
-                $array_filhos =$this->regras->DuplaNeg($no->getValorNo());
-                $no->utilizado(true);
-                $this->criarNo($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos =$this->regras->DuplaNeg($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNo($nosFolha,$arvore,$array_filhos,$no->getLinhaNo());
+                }
+
                 return ['sucesso'=>true, 'messagem'=>'Negação_Dupla','arv'=>$arvore];
             }
-            elseif($no->getValorNo()->getTipoPredicado()=='CONJUNCAO' and $no->getValorNo()->getNegadoPredicado()==0 and $regra==2){
-                $array_filhos = $this->regras->conjuncao($no->getValorNo());
-                $no->utilizado(true);
-                $this->criarNoSemBifucacao($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+            elseif($no->getValorNo()->getTipoPredicado()=='CONJUNCAO' and $no->getValorNo()->getNegadoPredicado()==0 and $regra==2){ 
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos = $this->regras->conjuncao($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNoSemBifucacao($nosFolha,$arvore,$array_filhos,$no->getLinhaNo());
+                }
                 return ['sucesso'=>true, 'messagem'=>'Conjunção','arv'=>$arvore];
             }
             elseif ($no->getValorNo()->getTipoPredicado()== 'DISJUNCAO' and $no->getValorNo()->getNegadoPredicado()==1  and $regra==3){
-                $array_filhos = $this->regras->disjuncaoNeg($no->getValorNo());
-                $no->utilizado(true);
-                $this->criarNoSemBifucacao($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos = $this->regras->disjuncaoNeg($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNoSemBifucacao($nosFolha,$arvore,$array_filhos,$no->getLinhaNo());
+                 
+                }               
+
                 return ['sucesso'=>true, 'messagem'=>'Negação_Disjunção','arv'=>$arvore];
             }
             elseif ($no->getValorNo()->getTipoPredicado()== 'CONDICIONAL' and $no->getValorNo()->getNegadoPredicado()==1  and $regra==4) {
-                $array_filhos = $this->regras->condicionalNeg($no->getValorNo());
-                $no->utilizado(true);
-                $this->criarNoSemBifucacao($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos = $this->regras->condicionalNeg($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNoSemBifucacao($nosFolha,$arvore,$array_filhos,$no->getLinhaNo());
+                }
+
                 return ['sucesso'=>true, 'messagem'=>'Negacão_Condicional','arv'=>$arvore];
             }
             elseif($no->getValorNo()->getTipoPredicado()=='DISJUNCAO' and $no->getValorNo()->getNegadoPredicado()==0  and $regra==5){
-                $array_filhos = $this->regras->disjuncao($no->getValorNo());
-                 $no->utilizado(true);
-                 $this->criarNoBifurcado($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos = $this->regras->disjuncao($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNoBifurcado($nosFolha,$arvore,$array_filhos,$no->getLinhaNo());
+                }
+
                  return ['sucesso'=>true, 'messagem'=>'Disjunção','arv'=>$arvore];
             }
             elseif ($no->getValorNo()->getTipoPredicado()== 'CONDICIONAL' and $no->getValorNo()->getNegadoPredicado()==0  and $regra==6){
-                $array_filhos = $this->regras->condicional($no->getValorNo());
-                $no->utilizado(true);
-                $this->criarNoBifurcado($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+              
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos = $this->regras->condicional($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNoBifurcado($nosFolha,$arvore,$array_filhos,$no->getLinhaNo());
+                }  
                 return ['sucesso'=>true, 'messagem'=>'Condicional','arv'=>$arvore];
             }
             elseif ($no->getValorNo()->getTipoPredicado()== 'BICONDICIONAL' and $no->getValorNo()->getNegadoPredicado()==0  and $regra==7){
-                $array_filhos = $this->regras->bicondicional($no->getValorNo());
-                 $no->utilizado(true);
-                 $this->criarNoBifurcadoDuplo($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos = $this->regras->bicondicional($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNoBifurcadoDuplo($nosFolha,$arvore,$array_filhos,$no->getLinhaNo());
+                }
+
                  return ['sucesso'=>true, 'messagem'=>'Bicondicional','arv'=>$arvore];
             }
             elseif ($no->getValorNo()->getTipoPredicado()== 'CONJUNCAO' and $no->getValorNo()->getNegadoPredicado()==1  and $regra==8){
-                $array_filhos = $this->regras->conjuncaoNeg($no->getValorNo());
-                $no->utilizado(true);
-                $this->criarNoBifurcado($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos = $this->regras->conjuncaoNeg($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNoBifurcado($nosFolha,$arvore,$array_filhos,$no->getLinhaNo());
+                }
+
                 return ['sucesso'=>true, 'messagem'=>'Negação_Conjunção','arv'=>$arvore];
             }
             elseif ($no->getValorNo()->getTipoPredicado()== 'BICONDICIONAL' and $no->getValorNo()->getNegadoPredicado()==1  and $regra==9){
-                $array_filhos = $this->regras->bicondicionalNeg($no->getValorNo());
-                 $no->utilizado(true);
-                 $this->criarNoBifurcadoDuplo($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
-                 return ['sucesso'=>true, 'messagem'=>'Negação_Bicondicional','arv'=>$arvore];
-
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos = $this->regras->bicondicionalNeg($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNoBifurcadoDuplo($nosFolha,$arvore,$array_filhos,$no->getLinhaNo());
                 }
+                 return ['sucesso'=>true, 'messagem'=>'Negação_Bicondicional','arv'=>$arvore];
+                }
+           
             return ['sucesso'=>false, 'messagem'=>'Regra Invalida'];
 
         }
@@ -636,59 +716,94 @@ class Gerador extends Controller
 
             $listaNos=$this->getNoslinha($arvore, $derivacao['linha']);
 
-            $no=[];
+            $no=null;
             foreach($listaNos as $noValido){
                 $noDescendente =$this->isDecendente($noValido,$noInsercao);
                 if($noDescendente!=false){
                     $no=$noValido;
                 }
             }
-
+        
+        
+            $ListanosFolha = $this->getNosFolha($arvore);
+           
+            for ($i=0 ; $i<count($ListanosFolha) ; $i++){
+                if (!$this->isDecendente($no,$ListanosFolha[$i])){
+                    unset($ListanosFolha[$i]);
+                }  
+            }
 
             if($derivacao['regra']==9){
-                $array_filhos = $this->regras->bicondicionalNeg($no->getValorNo());
-                $no->utilizado(true);
-                $this->criarNoBifurcadoDuplo($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos = $this->regras->bicondicionalNeg($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNoBifurcadoDuplo($nosFolha,$arvore,$array_filhos,$no->getLinhaNo());
+                }
+
             }
             elseif($derivacao['regra']==8){
-                $array_filhos = $this->regras->conjuncaoNeg($no->getValorNo());
-                $no->utilizado(true);
-                $this->criarNoBifurcado($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos = $this->regras->conjuncaoNeg($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNoBifurcado($nosFolha,$arvore,$array_filhos,$no->getLinhaNo());
+                }
+
             }
             elseif($derivacao['regra']==7){
-                $array_filhos = $this->regras->bicondicional($no->getValorNo());
-                $no->utilizado(true);
-                $this->criarNoBifurcadoDuplo($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos = $this->regras->bicondicional($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNoBifurcadoDuplo($nosFolha,$arvore,$array_filhos,$no->getLinhaNo());
+                }
+
             }
             elseif($derivacao['regra']==6){
-                $array_filhos = $this->regras->condicional($no->getValorNo());
-                $no->utilizado(true);
-                $this->criarNoBifurcado($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos = $this->regras->condicional($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNoBifurcado($nosFolha,$arvore,$array_filhos,$no->getLinhaNo());
+                }
+
             }
             elseif($derivacao['regra']==5){
-                $array_filhos = $this->regras->disjuncao($no->getValorNo());
-                $no->utilizado(true);
-                $this->criarNoBifurcado($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos = $this->regras->disjuncao($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNoBifurcado($nosFolha,$arvore,$array_filhos,$no->getLinhaNo());
+                }
+
             }
             elseif($derivacao['regra']==4){
-                $array_filhos = $this->regras->condicionalNeg($no->getValorNo());
-                $no->utilizado(true);
-                $this->criarNoSemBifucacao($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos = $this->regras->condicionalNeg($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNoSemBifucacao($nosFolha,$arvore,$array_filhos,$no->getLinhaNo());
+                }
+
             }
             elseif($derivacao['regra']==3){
-                $array_filhos = $this->regras->disjuncaoNeg($no->getValorNo());
-                $no->utilizado(true);
-                $this->criarNoSemBifucacao($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos = $this->regras->disjuncaoNeg($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNoSemBifucacao($nosFolha,$arvore,$array_filhos,$no->getLinhaNo());
+                }
+
             }
             elseif($derivacao['regra']==2){
-                $array_filhos = $this->regras->conjuncao($no->getValorNo());
-                $no->utilizado(true);
-                $this->criarNoSemBifucacao($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos = $this->regras->conjuncao($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNoSemBifucacao($nosFolha,$arvore,$array_filhos,$no->getLinhaNo());
+                }
+ 
             }
             else{
-                $array_filhos =$this->regras->DuplaNeg($no->getValorNo());
-                $no->utilizado(true);
-                $this->criarNo($noInsercao,$arvore,$array_filhos,$no->getLinhaNo());
+                foreach ($ListanosFolha as $nosFolha){
+                    $array_filhos =$this->regras->DuplaNeg($no->getValorNo());
+                    $no->utilizado(true);
+                    $this->criarNo($nosFolha,$arvore, $array_filhos,$no->getLinhaNo());
+                }
+                
 
             }
 

@@ -1,0 +1,40 @@
+<ARGUMENTO>
+    <PREMISSA>
+        <CONDICIONAL NEG="">
+            <ANTECENDENTE>
+                <LPRED NEG="">
+                    <PREDICATIVO>H</PREDICATIVO>
+                </LPRED>
+            </ANTECENDENTE>
+            <CONSEQUENTE>
+                <LPRED NEG="">
+                    <PREDICATIVO >T</PREDICATIVO>
+                </LPRED>
+            </CONSEQUENTE>
+        </CONDICIONAL>
+    </PREMISSA>
+    <PREMISSA>
+        <DISJUNCAO NEG="">
+            <PRIM>
+                <LPRED NEG="">
+                    <PREDICATIVO >H</PREDICATIVO>
+                </LPRED>
+            </PRIM>
+            <SEG>
+                <LPRED NEG="">
+                    <PREDICATIVO>R</PREDICATIVO>
+                </LPRED>
+            </SEG>
+        </DISJUNCAO>
+    </PREMISSA>
+    <PREMISSA>
+        <LPRED NEG="~">
+            <PREDICATIVO >T</PREDICATIVO>
+        </LPRED>
+    </PREMISSA>
+    <CONCLUSAO>
+        <LPRED NEG="">
+            <PREDICATIVO>R</PREDICATIVO>
+        </LPRED>
+    </CONCLUSAO>
+</ARGUMENTO>

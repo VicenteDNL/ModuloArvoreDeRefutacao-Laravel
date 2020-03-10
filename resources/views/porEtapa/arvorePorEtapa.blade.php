@@ -129,8 +129,8 @@
     </defs>
 
     @if($proximoNoInsercao!=null)
-        @if($proximoNoInsercao->getValorNo()->getValorPredicado()==$valor['arv']->getValorNo()->getValorPredicado() and $proximoNoInsercao->getLinhaNo()==$valor['arv']->getLinhaNo() and $proximoNoInsercao->getValorNo()->getNegadoPredicado()==$valor['arv']->getValorNo()->getNegadoPredicado() )
-            <rect x={{$valor['posX']-($valor['tmh']/2)}} y={{$valor['posY']-20}} rx=20 ry=20 width={{$valor['tmh']}} height="40" fill="url(#grad1)" stroke-width="5" stroke="#FFFF00" />
+        @if($proximoNoInsercao===$valor['arv'])  
+        <rect x={{$valor['posX']-($valor['tmh']/2)}} y={{$valor['posY']-20}} rx=20 ry=20 width={{$valor['tmh']}} height="40" fill="url(#grad1)" stroke-width="5" stroke="#FFFF00" />
         
         @else
             <rect x={{$valor['posX']-($valor['tmh']/2)}} y={{$valor['posY']-20}} rx=20 ry=20 width={{$valor['tmh']}} height="40" fill="url(#grad1)" stroke-width="2" stroke="#C0C0C0" />

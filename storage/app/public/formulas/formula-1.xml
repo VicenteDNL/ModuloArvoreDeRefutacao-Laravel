@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  |-  (P -> Q) v ( P ^ ~Q) -->
+<!DOCTYPE ARGUMENTO SYSTEM "argumento.dtd">
+<ARGUMENTO>
+	<CONCLUSAO>
+		<DISJUNCAO NEG="" CONECTIVO="v">
+			<PRIM>
+				<CONDICIONAL NEG="" CONECTIVO="→">
+					<ANTECEDENTE>
+						<LPRED NEG="">
+							<PREDICATIVO>P</PREDICATIVO>
+						</LPRED>
+					</ANTECEDENTE>
+					<CONSEQUENTE>
+						<LPRED NEG="">
+							<PREDICATIVO>Q</PREDICATIVO>
+						</LPRED>
+					</CONSEQUENTE>
+				</CONDICIONAL>
+			</PRIM>
+			<SEG>
+				<CONJUNCAO NEG="" CONECTIVO="^">
+					<PRIM>
+						<LPRED NEG="">
+							<PREDICATIVO>P</PREDICATIVO>
+						</LPRED>
+					</PRIM>
+					<SEG>
+						<LPRED NEG="~">
+							<PREDICATIVO>Q</PREDICATIVO>
+						</LPRED>
+					</SEG>
+				</CONJUNCAO>
+			</SEG>
+		</DISJUNCAO>
+	</CONCLUSAO>
+</ARGUMENTO>
